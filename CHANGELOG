@@ -1,6 +1,11 @@
 # Kemono Downloader Release Notes
 
-## v4.1.0. (07 May 2025)
+## v4.2.0 (28 July 2025)
+**feat: Add 'CLIP' Extension and domain adjustment**
+- Adjusted the domain from kemono.su to kemono.cr
+- [#26](https://github.com/VoxDroid/KemonoDownloader/pull/26) [gitwawa1/main](https://github.com/VoxDroid/KemonoDownloader/commit/2cab17d63ea1e446edf64ad13455b09adb40be44)
+
+## v4.1.0 (07 May 2025)
 **feat: Partial Localization for Simplified Chinese**
 - [#15](https://github.com/VoxDroid/KemonoDownloader/pull/15) [detached64/feature/zh-CN-localization](https://github.com/VoxDroid/KemonoDownloader/commit/8ad2cb2bb54de2a2e50c983959eb3df1fff0ed67)
 

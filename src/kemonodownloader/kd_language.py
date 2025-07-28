@@ -198,10 +198,10 @@ class KDLanguage:
             
             # Post Downloader tab
             "enter_post_url": {
-                "english": "Enter post URL (e.g., https://kemono.su/patreon/user/12345678/post/123456789)",
-                "japanese": "投稿URLを入力 (例: https://kemono.su/patreon/user/12345678/post/123456789)",
-                "korean": "게시물 URL 입력 (예: https://kemono.su/patreon/user/12345678/post/123456789)",
-                "chinese-simplified": "输入投稿 URL (例如: https://kemono.su/patreon/user/12345678/post/123456789)"
+                "english": "Enter post URL (e.g., https://kemono.cr/patreon/user/12345678/post/123456789)",
+                "japanese": "投稿URLを入力 (例: https://kemono.cr/patreon/user/12345678/post/123456789)",
+                "korean": "게시물 URL 입력 (예: https://kemono.cr/patreon/user/12345678/post/123456789)",
+                "chinese-simplified": "输入投稿 URL (例如: https://kemono.cr/patreon/user/12345678/post/123456789)"
             },
             "post_queue": {
                 "english": "Post Queue",
@@ -260,10 +260,10 @@ class KDLanguage:
             
             # Creator Downloader tab
             "enter_creator_url": {
-                "english": "Enter creator URL (e.g., https://kemono.su/patreon/user/12345678)",
-                "japanese": "クリエイターURLを入力 (例: https://kemono.su/patreon/user/12345678)",
-                "korean": "크리에이터 URL 입력 (예: https://kemono.su/patreon/user/12345678)",
-                "chinese-simplified": "输入创作者 URL (例如: https://kemono.su/patreon/user/12345678)"
+                "english": "Enter creator URL (e.g., https://kemono.cr/patreon/user/12345678)",
+                "japanese": "クリエイターURLを入力 (例: https://kemono.cr/patreon/user/12345678)",
+                "korean": "크리에이터 URL 입력 (예: https://kemono.cr/patreon/user/12345678)",
+                "chinese-simplified": "输入创作者 URL (例如: https://kemono.cr/patreon/user/12345678)"
             },
             "creator_queue": {
                 "english": "Creator Queue",
@@ -900,10 +900,10 @@ class KDLanguage:
             },
             # Error messages for media
             "invalid_url_format": {
-                "english": "Invalid URL format. Expected: https://kemono.su/[service]/user/[user_id]/post/[post_id]",
-                "japanese": "無効なURL形式。期待される形式: https://kemono.su/[service]/user/[user_id]/post/[post_id]",
-                "korean": "잘못된 URL 형식. 예상 형식: https://kemono.su/[service]/user/[user_id]/post/[post_id]",
-                "chinese-simplified": "无效的 URL 格式。预期格式: https://kemono.su/[service]/user/[user_id]/post/[post_id]"
+                "english": "Invalid URL format. Expected: https://kemono.cr/[service]/user/[user_id]/post/[post_id]",
+                "japanese": "無効なURL形式。期待される形式: https://kemono.cr/[service]/user/[user_id]/post/[post_id]",
+                "korean": "잘못된 URL 형식. 예상 형식: https://kemono.cr/[service]/user/[user_id]/post/[post_id]",
+                "chinese-simplified": "无效的 URL 格式。预期格式: https://kemono.cr/[service]/user/[user_id]/post/[post_id]"
             },
             "failed_to_fetch_post": {
                 "english": "Failed to fetch post - Status code: {0}",
@@ -968,12 +968,12 @@ class KDLanguage:
                 "chinese-simplified": "Kemono 下载器用户手册"
             },
             "help_intro": {
-                "english": "Welcome to the Kemono Downloader, a powerful tool designed to help you download content from Kemono.su, "
+                "english": "Welcome to the Kemono Downloader, a powerful tool designed to help you download content from Kemono.cr, "
                            "a platform that archives posts from various creator services such as Patreon, Fanbox, and more. This user manual provides "
                            "detailed instructions on how to use the application, covering every feature and tab in depth. Whether you're downloading a single post "
                            "or an entire creator's archive, this guide will walk you through each step, explain the interface, and offer troubleshooting tips to ensure a smooth experience.<br><br>"
                            "<b>Key Features:</b><br>"
-                           "- Download individual posts or entire creator profiles from Kemono.su.<br>"
+                           "- Download individual posts or entire creator profiles from Kemono.cr.<br>"
                            "- Support for multiple file types including images (JPG, PNG, GIF), videos (MP4), archives (ZIP, 7Z), and PDFs.<br>"
                            "- Concurrent downloads for faster performance, with customizable settings.<br>"
                            "- Preview images before downloading to confirm content.<br>"
@@ -1012,12 +1012,12 @@ class KDLanguage:
             },
             "help_getting_started_text": {
                 "english": "<b>1.1 Launching the Application</b><br>"
-                           "- When you first open the Kemono Downloader, you'll be greeted by an introductory screen featuring the application title 'Kemono.su Downloader'.<br>"
+                           "- When you first open the Kemono Downloader, you'll be greeted by an introductory screen featuring the application title 'Kemono.cr Downloader'.<br>"
                            "- Below the title, you'll see the developer's name ('Developed by VoxDroid') and a clickable link to the GitHub repository (github.com/VoxDroid) for updates and support.<br>"
                            "- Click the 'Launch' button in the center of the screen to proceed to the main interface.<br><br>"
                            "<b>1.2 Main Interface Overview</b><br>"
                            "The main interface is divided into four tabs, each serving a specific purpose:<br>"
-                           "  - <b>Post Downloader</b>: Use this tab to download files from specific Kemono.su posts by entering their URLs. Ideal for downloading individual posts.<br>"
+                           "  - <b>Post Downloader</b>: Use this tab to download files from specific Kemono.cr posts by entering their URLs. Ideal for downloading individual posts.<br>"
                            "  - <b>Creator Downloader</b>: Use this tab to download content from an entire creator's profile, fetching all their posts and associated files.<br>"
                            "  - <b>Settings</b>: Configure the application's behavior, such as save directories, simultaneous downloads, and UI preferences.<br>"
                            "  - <b>Help</b>: You're here! This tab provides this comprehensive user manual to guide you through using the application.<br><br>"
@@ -1030,9 +1030,9 @@ class KDLanguage:
                            "  - <b>Downloads</b>: Where downloaded files are saved.<br>"
                            "  - <b>Cache</b>: Stores temporary files for image previews.<br>"
                            "  - <b>Other Files</b>: Contains metadata like file hashes for deduplication.<br>"
-                           "- Ensure you have an active internet connection, as the application needs to fetch data from Kemono.su.",
+                           "- Ensure you have an active internet connection, as the application needs to fetch data from Kemono.cr.",
                 "japanese": "<b>1.1 アプリケーションの起動</b><br>"
-                            "- ケモノダウンローダーを初めて開くと、アプリケーションタイトル「Kemono.su Downloader」が表示された紹介画面が表示されます。<br>"
+                            "- ケモノダウンローダーを初めて開くと、アプリケーションタイトル「Kemono.cr Downloader」が表示された紹介画面が表示されます。<br>"
                             "- タイトルの下には、開発者名（「Developed by VoxDroid」）と、更新やサポートのためのGitHubリポジトリへのクリック可能なリンク（github.com/VoxDroid）が表示されます。<br>"
                             "- 画面中央の「起動」ボタンをクリックしてメインインターフェースに進みます。<br><br>"
                             "<b>1.2 メインインターフェースの概要</b><br>"
@@ -1052,12 +1052,12 @@ class KDLanguage:
                             "  - <b>その他のファイル</b>：重複排除のためのファイルハッシュなどのメタデータを含みます。<br>"
                             "- アプリケーションはKemono.suからデータをフェッチする必要があるため、アクティブなインターネット接続を確保してください。",
                 "korean": "<b>1.1 애플리케이션 실행</b><br>"
-                          "- 케모노 다운로더를 처음 열면 'Kemono.su Downloader'라는 애플리케이션 제목이 포함된 소개 화면이 표시됩니다。<br>"
+                          "- 케모노 다운로더를 처음 열면 'Kemono.cr Downloader'라는 애플리케이션 제목이 포함된 소개 화면이 표시됩니다。<br>"
                           "- 제목 아래에는 개발자 이름('Developed by VoxDroid')과 업데이트 및 지원을 위한 GitHub 저장소에 대한 클릭 가능한 링크(github.com/VoxDroid)가 표시됩니다.<br>"
                           "- 화면 중앙의 '실행' 버튼을 클릭하여 메인 인터페이스로 이동합니다。<br><br>"
                           "<b>1.2 메인 인터페이스 개요</b><br>"
                           "메인 인터페이스는 네 개의 탭으로 나뉘며, 각 탭은 특정 목적을 제공합니다:<br>"
-                          "  - <b>게시물 다운로더</b>: 이 탭을 사용하여 URL을 입력함으로써 특정 Kemono.su 게시물에서 파일을 다운로드합니다. 개별 게시물 다운로드에 이상적입니다.<br>"
+                          "  - <b>게시물 다운로더</b>: 이 탭을 사용하여 URL을 입력함으로써 특정 Kemono.cr 게시물에서 파일을 다운로드합니다. 개별 게시물 다운로드에 이상적입니다.<br>"
                           "  - <b>크리에이터 다운로더</b>: 이 탭을 사용하여 크리에이터 전체 프로필에서 콘텐츠를 다운로드하며, 모든 게시물과 관련 파일을 가져옵니다.<br>"
                           "  - <b>설정</b>: 저장 디렉토리, 동시 다운로드 수, UI 설정 등 애플리케이션 동작을 구성합니다.<br>"
                           "  - <b>도움말</b>: 여기입니다! 이 탭은 애플리케이션 사용을 안내하는 포괄적인 사용자 매뉴얼을 제공합니다.<br><br>"
@@ -1079,11 +1079,11 @@ class KDLanguage:
                 "chinese-simplified": "2. 使用投稿下载器选项卡"
             },
             "help_post_downloader_text": {
-                "english": "The Post Downloader tab is designed for downloading content from specific Kemono.su posts. You can add multiple posts to a queue, view their contents, select files to download, and monitor the download progress. Below are the detailed steps to use this tab effectively:<br><br>"
+                "english": "The Post Downloader tab is designed for downloading content from specific Kemono.cr posts. You can add multiple posts to a queue, view their contents, select files to download, and monitor the download progress. Below are the detailed steps to use this tab effectively:<br><br>"
                            "<b>2.1 Adding a Post to the Queue</b><br>"
                            "- <b>Step 1</b>: Navigate to the 'Post Downloader' tab by clicking its label at the top of the interface. The tab is marked with a download icon.<br>"
-                           "- <b>Step 2</b>: Locate the 'Enter post URL' field at the top left of the tab. This is a text input field with a placeholder text 'Enter post URL (e.g., https://kemono.su/patreon/user/123/post/456)'.<br>"
-                           "- <b>Step 3</b>: Enter the URL of a Kemono.su post. The URL must follow the format: https://kemono.su/[service]/user/[user_id]/post/[post_id]. For example: https://kemono.su/patreon/user/123456785/post/12345678.<br>"
+                           "- <b>Step 2</b>: Locate the 'Enter post URL' field at the top left of the tab. This is a text input field with a placeholder text 'Enter post URL (e.g., https://kemono.cr/patreon/user/123/post/456)'.<br>"
+                           "- <b>Step 3</b>: Enter the URL of a Kemono.cr post. The URL must follow the format: https://kemono.cr/[service]/user/[user_id]/post/[post_id]. For example: https://kemono.cr/patreon/user/123456785/post/12345678.<br>"
                            "- <b>Step 4</b>: Click the 'Add to Queue' button next to the input field. The button is styled with a plus icon and a blue background.<br>"
                            "- <b>Step 5</b>: The post URL will appear in the 'Post Queue' list below the input field. Each entry in the list includes:<br>"
                            "  - An eye icon to view the post's contents.<br>"
@@ -1091,7 +1091,7 @@ class KDLanguage:
                            "  - An 'X' button to remove the post from the queue.<br><br>"
                            "<b>2.2 Viewing Post Contents</b><br>"
                            "- <b>Step 1</b>: In the 'Post Queue' list, find the post you want to inspect.<br>"
-                           "- <b>Step 2</b>: Click the eye icon next to the post URL. This initiates a background task to fetch the post's data from Kemono.su.<br>"
+                           "- <b>Step 2</b>: Click the eye icon next to the post URL. This initiates a background task to fetch the post's data from Kemono.cr.<br>"
                            "- <b>Step 3</b>: The files associated with the post will be displayed in the 'Files to Download' list on the right side of the tab.<br>"
                            "- <b>Step 4</b>: Use the 'Filter by Type' checkboxes (e.g., JPG, ZIP, MP4) to show only specific file types. For example, checking 'JPG' will display only image files with .jpg or .jpeg extensions.<br>"
                            "- <b>Step 5</b>: Use the search bar above the 'Files to Download' list to filter files by name. For example, typing 'image' will show only files with 'image' in their names.<br>"
@@ -1120,7 +1120,7 @@ class KDLanguage:
                            "- The folder structure is organized as follows:<br>"
                            "  - <b>Service Folder</b>: Named after the service (e.g., 'patreon').<br>"
                            "  - <b>Post Folder</b>: Named 'post_[post_id]' (e.g., 'post_12345678').<br>"
-                           "  - Example: If downloading from https://kemono.su/patreon/user/123456785/post/12345678, files will be saved in '[Save Directory]/patreon/post_12345678/'.<br>"
+                           "  - Example: If downloading from https://kemono.cr/patreon/user/123456785/post/12345678, files will be saved in '[Save Directory]/patreon/post_12345678/'.<br>"
                            "- Files are named based on their original URLs, with any special characters (e.g., '/') replaced with underscores to ensure compatibility with your filesystem.<br><br>"
                            "<b>2.7 Additional Features</b><br>"
                            "- <b>Concurrent Downloads</b>: The application supports downloading multiple files simultaneously, with the number of concurrent downloads set in the Settings tab (default is 10, adjustable between 1-10).<br>"
@@ -1130,8 +1130,8 @@ class KDLanguage:
                 "japanese": "投稿ダウンローダータブは、特定のKemono.su投稿からコンテンツをダウンロードするために設計されています。複数の投稿をキューに追加し、その内容を表示し、ダウンロードするファイルを選択し、ダウンロードの進捗を監視できます。以下に、このタブを効果的に使用するための詳細な手順を示します：<br><br>"
                             "<b>2.1 投稿をキューに追加する</b><br>"
                             "- <b>ステップ1</b>：インターフェース上部の「投稿ダウンローダー」タブをクリックして移動します。このタブはダウンロードアイコンでマークされています。<br>"
-                            "- <b>ステップ2</b>：タブの左上にある「投稿URLを入力」フィールドを見つけます。これは「投稿URLを入力（例: https://kemono.su/patreon/user/123/post/456）」というプレースホルダーテキストが表示されたテキスト入力フィールドです。<br>"
-                            "- <b>ステップ3</b>：Kemono.suの投稿URLを入力します。URLは次の形式である必要があります：https://kemono.su/[service]/user/[user_id]/post/[post_id]。例: https://kemono.su/patreon/user/123456785/post/12345678。<br>"
+                            "- <b>ステップ2</b>：タブの左上にある「投稿URLを入力」フィールドを見つけます。これは「投稿URLを入力（例: https://kemono.cr/patreon/user/123/post/456）」というプレースホルダーテキストが表示されたテキスト入力フィールドです。<br>"
+                            "- <b>ステップ3</b>：Kemono.suの投稿URLを入力します。URLは次の形式である必要があります：https://kemono.cr/[service]/user/[user_id]/post/[post_id]。例: https://kemono.cr/patreon/user/123456785/post/12345678。<br>"
                             "- <b>ステップ4</b>：入力フィールドの横にある「キューに追加」ボタンをクリックします。このボタンはプラスアイコンと青い背景でスタイルされています。<br>"
                             "- <b>ステップ5</b>：投稿URLが入力フィールド下の「投稿キュー」リストに表示されます。リストの各エントリには以下が含まれます：<br>"
                             "  - 投稿の内容を表示するための目アイコン。<br>"
@@ -1168,18 +1168,18 @@ class KDLanguage:
                             "- フォルダ構造は次のように整理されています：<br>"
                             "  - <b>サービスフォルダ</b>：サービス名に基づいて命名されます（例: 「patreon」）。<br>"
                             "  - <b>投稿フォルダ</b>：「post_[post_id]」と命名されます（例: 「post_12345678」）。<br>"
-                            "  - 例: https://kemono.su/patreon/user/123456785/post/12345678 からダウンロードする場合、ファイルは「[保存ディレクトリ]/patreon/post_12345678/」に保存されます。<br>"
+                            "  - 例: https://kemono.cr/patreon/user/123456785/post/12345678 からダウンロードする場合、ファイルは「[保存ディレクトリ]/patreon/post_12345678/」に保存されます。<br>"
                             "- ファイル名は元のURLに基づいて命名され、ファイルシステムとの互換性を確保するために特殊文字（例: 「/」）はアンダースコアに置き換えられます。<br><br>"
                             "<b>2.7 追加機能</b><br>"
                             "- <b>同時ダウンロード</b>：アプリケーションは複数のファイルを同時にダウンロードでき、同時ダウンロードの数は設定タブで設定されます（デフォルトは10、1-10の間で調整可能）。<br>"
                             "- <b>ファイルの重複排除</b>：アプリケーションはURLハッシュを使用して以前にダウンロードされたファイルを検出し、重複を防ぎます。ハッシュデータは「その他のファイル」ディレクトリ内の「file_hashes.json」に保存されます。<br>"
                             "- <b>画像キャッシュ</b>：画像をプレビューする際、それらは「キャッシュ」ディレクトリにキャッシュされ、同じ画像の将来のプレビューを高速化します。<br>"
                             "- <b>ログ記録</b>：コンソールは、ファイル検出、ダウンロード進捗、エラーを含むすべての操作の詳細なログを提供し、問題のデバッグに役立ちます。",
-                "korean": "게시물 다운로더 탭은 특정 Kemono.su 게시물에서 콘텐츠를 다운로드하기 위해 설계되었습니다. 여러 게시물을 대기열에 추가하고, 내용을 보고, 다운로드할 파일을 선택하며, 다운로드 진행 상황을 모니터링할 수 있습니다. 아래는 이 탭을 효과적으로 사용하는 자세한 단계입니다:<br><br>"
+                "korean": "게시물 다운로더 탭은 특정 Kemono.cr 게시물에서 콘텐츠를 다운로드하기 위해 설계되었습니다. 여러 게시물을 대기열에 추가하고, 내용을 보고, 다운로드할 파일을 선택하며, 다운로드 진행 상황을 모니터링할 수 있습니다. 아래는 이 탭을 효과적으로 사용하는 자세한 단계입니다:<br><br>"
                           "<b>2.1 게시물을 대기열에 추가하기</b><br>"
                           "- <b>단계 1</b>: 인터페이스 상단의 '게시물 다운로더' 탭을 클릭하여 이동합니다. 이 탭은 다운로드 아이콘으로 표시됩니다.<br>"
-                          "- <b>단계 2</b>: 탭의 좌측 상단에 있는 '게시물 URL 입력' 필드를 찾습니다. 이 필드는 '게시물 URL 입력(예: https://kemono.su/patreon/user/123/post/456)'이라는 플레이스홀더 텍스트가 있는 텍스트 입력 필드입니다.<br>"
-                          "- <b>단계 3</b>: Kemono.su 게시물의 URL을 입력합니다. URL은 다음 형식을 따라야 합니다: https://kemono.su/[service]/user/[user_id]/post/[post_id]. 예: https://kemono.su/patreon/user/123456785/post/12345678.<br>"
+                          "- <b>단계 2</b>: 탭의 좌측 상단에 있는 '게시물 URL 입력' 필드를 찾습니다. 이 필드는 '게시물 URL 입력(예: https://kemono.cr/patreon/user/123/post/456)'이라는 플레이스홀더 텍스트가 있는 텍스트 입력 필드입니다.<br>"
+                          "- <b>단계 3</b>: Kemono.cr 게시물의 URL을 입력합니다. URL은 다음 형식을 따라야 합니다: https://kemono.cr/[service]/user/[user_id]/post/[post_id]. 예: https://kemono.cr/patreon/user/123456785/post/12345678.<br>"
                           "- <b>단계 4</b>: 입력 필드 옆의 '대기열에 추가' 버튼을 클릭합니다. 이 버튼은 플러스 아이콘과 파란색 배경으로 스타일링되어 있습니다.<br>"
                           "- <b>단계 5</b>: 게시물 URL이 입력 필드 아래의 '게시물 대기열' 목록에 나타납니다. 목록의 각 항목에는 다음이 포함됩니다:<br>"
                           "  - 게시물 내용을 보기 위한 눈 아이콘.<br>"
@@ -1216,7 +1216,7 @@ class KDLanguage:
                           "- 폴더 구조는 다음과 같이 구성됩니다:<br>"
                           "  - <b>서비스 폴더</b>: 서비스 이름으로 명명됩니다(예: 'patreon').<br>"
                           "  - <b>게시물 폴더</b>: 'post_[post_id]'로 명명됩니다(예: 'post_12345678').<br>"
-                          "  - 예: https://kemono.su/patreon/user/123456785/post/12345678에서 다운로드하면 파일은 '[저장 디렉토리]/patreon/post_12345678/'에 저장됩니다.<br>"
+                          "  - 예: https://kemono.cr/patreon/user/123456785/post/12345678에서 다운로드하면 파일은 '[저장 디렉토리]/patreon/post_12345678/'에 저장됩니다.<br>"
                           "- 파일 이름은 원래 URL을 기반으로 하며, 파일 시스템 호환성을 보장하기 위해 특수 문자(예: '/')는 밑줄로 대체됩니다.<br><br>"
                           "<b>2.7 추가 기능</b><br>"
                           "- <b>동시 다운로드</b>: 애플리케이션은 여러 파일을 동시에 다운로드할 수 있으며, 동시 다운로드 수는 설정 탭에서 설정됩니다(기본값은 10, 1-10 사이에서 조정 가능).<br>"
@@ -1231,11 +1231,11 @@ class KDLanguage:
                 "chinese-simplified": "3. 使用创作者下载器选项卡"
             },
             "help_creator_downloader_text": {
-                "english": "The Creator Downloader tab is designed for bulk downloading content from a creator's entire profile on Kemono.su. You can queue multiple creators, fetch their posts, select specific content to download, and monitor the progress. This tab is ideal for archiving a creator's work or downloading content from multiple creators at once. Below are the detailed steps to use this tab effectively:<br><br>"
+                "english": "The Creator Downloader tab is designed for bulk downloading content from a creator's entire profile on Kemono.cr. You can queue multiple creators, fetch their posts, select specific content to download, and monitor the progress. This tab is ideal for archiving a creator's work or downloading content from multiple creators at once. Below are the detailed steps to use this tab effectively:<br><br>"
                            "<b>3.1 Adding a Creator to the Queue</b><br>"
                            "- <b>Step 1</b>: Navigate to the 'Creator Downloader' tab by clicking its label at the top of the interface. The tab is marked with a user-edit icon.<br>"
-                           "- <b>Step 2</b>: Locate the 'Enter creator URL' field at the top left of the tab. This is a text input field with a placeholder text 'Enter creator URL (e.g., https://kemono.su/patreon/user/12345678)'.<br>"
-                           "- <b>Step 3</b>: Enter the URL of a creator's profile on Kemono.su. The URL must follow the format: https://kemono.su/[service]/user/[user_id]. For example: https://kemono.su/patreon/user/12345678.<br>"
+                           "- <b>Step 2</b>: Locate the 'Enter creator URL' field at the top left of the tab. This is a text input field with a placeholder text 'Enter creator URL (e.g., https://kemono.cr/patreon/user/12345678)'.<br>"
+                           "- <b>Step 3</b>: Enter the URL of a creator's profile on Kemono.cr. The URL must follow the format: https://kemono.cr/[service]/user/[user_id]. For example: https://kemono.cr/patreon/user/12345678.<br>"
                            "- <b>Step 4</b>: Click the 'Add to Queue' button next to the input field. The button is styled with a plus icon and a blue background.<br>"
                            "- <b>Step 5</b>: The creator URL will appear in the 'Creator Queue' list below the input field. Each entry in the list includes:<br>"
                            "  - An eye icon to fetch and view the creator's posts.<br>"
@@ -1244,7 +1244,7 @@ class KDLanguage:
                            "- <b>Note</b>: Duplicate URLs are automatically prevented. If you try to add a URL already in the queue, a warning message will appear in the console: '[WARNING] URL already in queue.'<br><br>"
                            "<b>3.2 Viewing Creator Posts</b><br>"
                            "- <b>Step 1</b>: In the 'Creator Queue' list, find the creator whose posts you want to view.<br>"
-                           "- <b>Step 2</b>: Click the eye icon next to the creator URL. This initiates a background task to fetch all posts associated with the creator from Kemono.su.<br>"
+                           "- <b>Step 2</b>: Click the eye icon next to the creator URL. This initiates a background task to fetch all posts associated with the creator from Kemono.cr.<br>"
                            "- <b>Step 3</b>: The posts will be displayed in the 'Posts to Download' list on the right side of the tab. Each post entry includes:<br>"
                            "  - A checkbox to select the post for download.<br>"
                            "  - The post title (or 'Post [post_id]' if no title is available).<br>"
@@ -1287,7 +1287,7 @@ class KDLanguage:
                            "- The folder structure is organized as follows:<br>"
                            "  - <b>Creator Folder</b>: Named after the creator's ID (e.g., '12345678').<br>"
                            "  - <b>Post Folder</b>: Named 'post_[post_id]' within the creator folder (e.g., 'post_12345678').<br>"
-                           "  - Example: If downloading from creator https://kemono.su/patreon/user/12345678, files from post 12345678 will be saved in '[Save Directory]/12345678/post_12345678/'.<br>"
+                           "  - Example: If downloading from creator https://kemono.cr/patreon/user/12345678, files from post 12345678 will be saved in '[Save Directory]/12345678/post_12345678/'.<br>"
                            "- Files are named based on their original URLs, with any special characters (e.g., '/') replaced with underscores to ensure compatibility with your filesystem.<br>"
                            "- <b>File Deduplication</b>: The application uses URL hashes to detect and skip previously downloaded files, storing hash data in 'file_hashes.json' in the 'Other Files' directory.<br><br>"
                            "<b>3.8 Additional Features</b><br>"
@@ -1298,8 +1298,8 @@ class KDLanguage:
                 "japanese": "クリエイターダウンローダータブは、Kemono.su上のクリエイターの全プロフィールからコンテンツを一括ダウンロードするために設計されています。複数のクリエイターをキューに追加し、投稿を取得し、特定のコンテンツを選択してダウンロードし、進捗を監視できます。このタブは、クリエイターの作品をアーカイブしたり、複数のクリエイターから一度にコンテンツをダウンロードするのに最適です。以下に、このタブを効果的に使用するための詳細な手順を示します：<br><br>"
                             "<b>3.1 クリエイターをキューに追加する</b><br>"
                             "- <b>ステップ1</b>：インターフェース上部の「クリエイターダウンローダー」タブをクリックして移動します。このタブはユーザー編集アイコンでマークされています。<br>"
-                            "- <b>ステップ2</b>：タブの左上にある「クリエイターURLを入力」フィールドを見つけます。これは「クリエイターURLを入力（例: https://kemono.su/patreon/user/12345678）」というプレースホルダーテキストが表示されたテキスト入力フィールドです。<br>"
-                            "- <b>ステップ3</b>：Kemono.suのクリエイタープロフィールのURLを入力します。URLは次の形式である必要があります：https://kemono.su/[service]/user/[user_id]。例: https://kemono.su/patreon/user/12345678。<br>"
+                            "- <b>ステップ2</b>：タブの左上にある「クリエイターURLを入力」フィールドを見つけます。これは「クリエイターURLを入力（例: https://kemono.cr/patreon/user/12345678）」というプレースホルダーテキストが表示されたテキスト入力フィールドです。<br>"
+                            "- <b>ステップ3</b>：Kemono.suのクリエイタープロフィールのURLを入力します。URLは次の形式である必要があります：https://kemono.cr/[service]/user/[user_id]。例: https://kemono.cr/patreon/user/12345678。<br>"
                             "- <b>ステップ4</b>：入力フィールドの横にある「キューに追加」ボタンをクリックします。このボタンはプラスアイコンと青い背景でスタイルされています。<br>"
                             "- <b>ステップ5</b>：クリエイターURLが入力フィールド下の「クリエイターキュー」リストに表示されます。リストの各エントリには以下が含まれます：<br>"
                             "  - クリエイターの投稿を取得して表示するための目アイコン。<br>"
@@ -1351,7 +1351,7 @@ class KDLanguage:
                             "- フォルダ構造は次のように整理されています：<br>"
                             "  - <b>クリエイターフォルダ</b>：クリエイターのIDに基づいて命名されます（例: 「12345678」）。<br>"
                             "  - <b>投稿フォルダ</b>：クリエイターフォルダ内で「post_[post_id]」と命名されます（例: 「post_12345678」）。<br>"
-                            "  - 例: クリエイター https://kemono.su/patreon/user/12345678 からダウンロードする場合、投稿12345678のファイルは「[保存ディレクトリ]/12345678/post_12345678/」に保存されます。<br>"
+                            "  - 例: クリエイター https://kemono.cr/patreon/user/12345678 からダウンロードする場合、投稿12345678のファイルは「[保存ディレクトリ]/12345678/post_12345678/」に保存されます。<br>"
                             "- ファイル名は元のURLに基づいて命名され、ファイルシステムとの互換性を確保するために特殊文字（例: 「/」）はアンダースコアに置き換えられます。<br>"
                             "- <b>ファイルの重複排除</b>：アプリケーションはURLハッシュを使用して以前にダウンロードされたファイルを検出しスキップし、ハッシュデータは「その他のファイル」ディレクトリの「file_hashes.json」に保存されます。<br><br>"
                             "<b>3.8 追加機能</b><br>"
@@ -1360,8 +1360,8 @@ class KDLanguage:
                 "korean": "크리에이터 다운로더 탭은 Kemono.su에서 크리에이터의 전체 프로필에서 콘텐츠를 대량으로 다운로드하도록 설계되었습니다. 여러 크리에이터를 대기열에 추가하고, 그들의 게시물을 가져오며, 다운로드할 특정 콘텐츠를 선택하고 진행 상황을 모니터링할 수 있습니다. 이 탭은 크리에이터의 작업을 아카이빙하거나 여러 크리에이터의 콘텐츠를 한 번에 다운로드하는 데 이상적입니다. 아래는 이 탭을 효과적으로 사용하는 자세한 단계입니다:<br><br>"
                           "<b>3.1 크리에이터를 대기열에 추가하기</b><br>"
                           "- <b>단계 1</b>: 인터페이스 상단의 '크리에이터 다운로더' 탭을 클릭하여 이동합니다. 이 탭은 사용자 편집 아이콘으로 표시됩니다.<br>"
-                          "- <b>단계 2</b>: 탭의 좌측 상단에 있는 '크리에이터 URL 입력' 필드를 찾습니다. 이 필드는 '크리에이터 URL 입력(예: https://kemono.su/patreon/user/12345678)'라는 플레이스홀더 텍스트가 있는 텍스트 입력 필드입니다.<br>"
-                          "- <b>단계 3</b>: Kemono.su의 크리에이터 프로필 URL을 입력합니다. URL은 다음 형식을 따라야 합니다: https://kemono.su/[service]/user/[user_id]. 예: https://kemono.su/patreon/user/12345678.<br>"
+                          "- <b>단계 2</b>: 탭의 좌측 상단에 있는 '크리에이터 URL 입력' 필드를 찾습니다. 이 필드는 '크리에이터 URL 입력(예: https://kemono.cr/patreon/user/12345678)'라는 플레이스홀더 텍스트가 있는 텍스트 입력 필드입니다.<br>"
+                          "- <b>단계 3</b>: Kemono.su의 크리에이터 프로필 URL을 입력합니다. URL은 다음 형식을 따라야 합니다: https://kemono.cr/[service]/user/[user_id]. 예: https://kemono.cr/patreon/user/12345678.<br>"
                           "- <b>단계 4</b>: 입력 필드 옆의 '대기열에 추가' 버튼을 클릭합니다. 이 버튼은 플러스 아이콘과 파란색 배경으로 스타일링되어 있습니다.<br>"
                           "- <b>단계 5</b>: 크리에이터 URL이 입력 필드 아래의 '크리에이터 대기열' 목록에 나타납니다. 목록의 각 항목에는 다음이 포함됩니다:<br>"
                           "  - 크리에이터의 게시물을 가져오고 보기 위한 눈 아이콘.<br>"
@@ -1413,7 +1413,7 @@ class KDLanguage:
                           "- 폴더 구조는 다음과 같이 구성됩니다:<br>"
                           "  - <b>크리에이터 폴더</b>: 크리에이터의 ID로 명명됩니다(예: '12345678').<br>"
                           "  - <b>게시물 폴더</b>: 크리에이터 폴더 내에서 'post_[post_id]'로 명명됩니다(예: 'post_12345678').<br>"
-                          "  - 예: 크리에이터 https://kemono.su/patreon/user/12345678에서 다운로드하면 게시물 12345678의 파일은 '[저장 디렉토리]/12345678/post_12345678/'에 저장됩니다.<br>"
+                          "  - 예: 크리에이터 https://kemono.cr/patreon/user/12345678에서 다운로드하면 게시물 12345678의 파일은 '[저장 디렉토리]/12345678/post_12345678/'에 저장됩니다.<br>"
                           "- 파일 이름은 원래 URL을 기반으로 하며, 파일 시스템 호환성을 보장하기 위해 특수 문자(예: '/')는 밑줄로 대체됩니다.<br>"
                           "- <b>파일 중복 제거</b>: 애플리케이션은 URL 해시를 사용하여 이전에 다운로드된 파일을 감지하고 건너뛰며, 해시 데이터는 '기타 파일' 디렉토리의 'file_hashes.json'에 저장됩니다.<br><br>"
                           "<b>3.8 추가 기능</b><br>"
@@ -1561,17 +1561,17 @@ class KDLanguage:
             "help_troubleshooting_text": {
                 "english": "This section addresses common issues you might encounter while using the Kemono Downloader and provides solutions to resolve them. If your problem isn’t listed here, refer to the 'Contact and Support' section for further assistance.<br><br>"
                            "<b>6.1 Download Fails with 'Connection Error'</b><br>"
-                           "- <b>Cause</b>: No internet connection or Kemono.su is temporarily unavailable.<br>"
+                           "- <b>Cause</b>: No internet connection or Kemono.cr is temporarily unavailable.<br>"
                            "- <b>Solution</b>: Check your internet connection. Wait a few minutes and try again, as the site may be down for maintenance. Check the console for specific error messages (e.g., '[ERROR] Failed to connect to URL').<br><br>"
                            "<b>6.2 Files Are Not Downloading</b><br>"
                            "- <b>Cause</b>: No files selected, or the post/creator URL is invalid.<br>"
-                           "- <b>Solution</b>: Ensure you’ve selected files or posts in the 'Files to Download' or 'Posts to Download' lists. Verify the URL format (e.g., https://kemono.su/patreon/user/12345678/post/12345678). Check the console for warnings like '[WARNING] No files found for URL'.<br><br>"
+                           "- <b>Solution</b>: Ensure you’ve selected files or posts in the 'Files to Download' or 'Posts to Download' lists. Verify the URL format (e.g., https://kemono.cr/patreon/user/12345678/post/12345678). Check the console for warnings like '[WARNING] No files found for URL'.<br><br>"
                            "<b>6.3 Downloads Are Slow</b><br>"
                            "- <b>Cause</b>: Too many simultaneous downloads or a slow internet connection.<br>"
                            "- <b>Solution</b>: Reduce the 'Max Simultaneous Downloads' value in the Settings tab (e.g., from 10 to 5). Test your internet speed to ensure it’s not the bottleneck.<br><br>"
                            "<b>6.4 Image Previews Don’t Load</b><br>"
                            "- <b>Cause</b>: Corrupted cache or network issues.<br>"
-                           "- <b>Solution</b>: Go to the Settings tab and click 'Clear Cache' to remove temporary files. Try previewing again. If the issue persists, check your internet connection or the file’s availability on Kemono.su.<br><br>"
+                           "- <b>Solution</b>: Go to the Settings tab and click 'Clear Cache' to remove temporary files. Try previewing again. If the issue persists, check your internet connection or the file’s availability on Kemono.cr.<br><br>"
                            "<b>6.5 Duplicate Files Are Downloaded</b><br>"
                            "- <b>Cause</b>: The 'file_hashes.json' file is missing or corrupted.<br>"
                            "- <b>Solution</b>: In the Settings tab, click 'Reset File Hashes' to clear the deduplication data, then re-download. The application will rebuild the hash file to prevent future duplicates.<br><br>"
@@ -1587,7 +1587,7 @@ class KDLanguage:
                             "- <b>解決策</b>：インターネット接続を確認してください。サイトがメンテナンス中の可能性があるため、数分待ってから再試行してください。コンソールで具体的なエラーメッセージ（例：「[エラー] URLへの接続に失敗しました」）を確認してください。<br><br>"
                             "<b>6.2 ファイルがダウンロードされない</b><br>"
                             "- <b>原因</b>：ファイルが選択されていないか、投稿/クリエイターURLが無効。<br>"
-                            "- <b>解決策</b>：「ダウンロードするファイル」または「ダウンロードする投稿」リストでファイルまたは投稿を選択していることを確認してください。URL形式（例：https://kemono.su/patreon/user/12345678/post/12345678）が正しいか確認してください。コンソールで「[警告] URLにファイルが見つかりませんでした」などの警告を確認してください。<br><br>"
+                            "- <b>解決策</b>：「ダウンロードするファイル」または「ダウンロードする投稿」リストでファイルまたは投稿を選択していることを確認してください。URL形式（例：https://kemono.cr/patreon/user/12345678/post/12345678）が正しいか確認してください。コンソールで「[警告] URLにファイルが見つかりませんでした」などの警告を確認してください。<br><br>"
                             "<b>6.3 ダウンロードが遅い</b><br>"
                             "- <b>原因</b>：同時ダウンロード数が多すぎるか、インターネット接続が遅い。<br>"
                             "- <b>解決策</b>：設定タブで「最大同時ダウンロード数」を減らしてください（例：10から5へ）。インターネット速度をテストしてボトルネックでないことを確認してください。<br><br>"
@@ -1609,7 +1609,7 @@ class KDLanguage:
                           "- <b>해결책</b>: 인터넷 연결을 확인하세요. 사이트가 유지보수 중일 수 있으니 몇 분 기다린 후 다시 시도하세요. 콘솔에서 구체적인 오류 메시지(예: '[오류] URL 연결 실패')를 확인하세요.<br><br>"
                           "<b>6.2 파일이 다운로드되지 않음</b><br>"
                           "- <b>원인</b>: 파일이 선택되지 않았거나 게시물/크리에이터 URL이 유효하지 않음.<br>"
-                          "- <b>해결책</b>: '다운로드할 파일' 또는 '다운로드할 게시물' 목록에서 파일이나 게시물을 선택했는지 확인하세요. URL 형식이 올바른지(예: https://kemono.su/patreon/user/12345678/post/12345678) 확인하세요. 콘솔에서 '[경고] URL에서 파일을 찾을 수 없음'과 같은 경고를 확인하세요.<br><br>"
+                          "- <b>해결책</b>: '다운로드할 파일' 또는 '다운로드할 게시물' 목록에서 파일이나 게시물을 선택했는지 확인하세요. URL 형식이 올바른지(예: https://kemono.cr/patreon/user/12345678/post/12345678) 확인하세요. 콘솔에서 '[경고] URL에서 파일을 찾을 수 없음'과 같은 경고를 확인하세요.<br><br>"
                           "<b>6.3 다운로드 속도가 느림</b><br>"
                           "- <b>원인</b>: 동시 다운로드가 너무 많거나 인터넷 연결이 느림.<br>"
                           "- <b>해결책</b>: 설정 탭에서 '최대 동시 다운로드 수'를 줄이세요(예: 10에서 5로). 인터넷 속도를 테스트하여 병목 현상이 아닌지 확인하세요.<br><br>"

@@ -42,14 +42,14 @@ user_agent = ua.chrome
 
 HEADERS = {
     "User-Agent": user_agent,
-    "Referer": "https://kemono.su/", 
+    "Referer": "https://kemono.cr/", 
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
     "Accept-Language": accept_language, 
     "Accept-Encoding": "gzip, deflate",  
     "Connection": "keep-alive",
     "Upgrade-Insecure-Requests": "1"
 }
-API_BASE = "https://kemono.su/api/v1"
+API_BASE = "https://kemono.cr/api/v1"
 
 class PreviewThread(QThread):
     preview_ready = pyqtSignal(str, object)
@@ -509,7 +509,7 @@ class PostDetectionThread(QThread):
             return
 
         parts = self.url.split('/')
-        if len(parts) < 7 or 'kemono.su' not in self.url:
+        if len(parts) < 7 or 'kemono.cr' not in self.url:
             self.error.emit(translate("invalid_url_format"))
             return
         service, creator_id, post_id = parts[-5], parts[-3], parts[-1]
@@ -561,7 +561,7 @@ class PostDetectionThread(QThread):
             file_path = post['file']['path']
             file_name = post['file'].get('name', '')
             file_ext = get_effective_extension(file_path, file_name)
-            file_url = urljoin("https://kemono.su", file_path)
+            file_url = urljoin("https://kemono.cr", file_path)
             if 'f=' not in file_url and file_name:
                 file_url += f"?f={file_name}"
             if file_ext in allowed_extensions:
@@ -573,7 +573,7 @@ class PostDetectionThread(QThread):
                     attachment_path = attachment['path']
                     attachment_name = attachment.get('name', '')
                     attachment_ext = get_effective_extension(attachment_path, attachment_name)
-                    attachment_url = urljoin("https://kemono.su", attachment_path)
+                    attachment_url = urljoin("https://kemono.cr", attachment_path)
                     if 'f=' not in attachment_url and attachment_name:
                         attachment_url += f"?f={attachment_name}"
                     if attachment_ext in allowed_extensions:
@@ -582,7 +582,7 @@ class PostDetectionThread(QThread):
         if 'content' in post and post['content']:
             soup = BeautifulSoup(post['content'], 'html.parser')
             for img in soup.select('img[src]'):
-                img_url = urljoin("https://kemono.su", img['src'])
+                img_url = urljoin("https://kemono.cr", img['src'])
                 img_ext = os.path.splitext(img_url)[1].lower()
                 img_name = os.path.basename(img_url)
                 if img_ext in allowed_extensions:
@@ -622,7 +622,7 @@ class FilePreparationThread(QThread):
             file_path = post['file']['path']
             file_name = post['file'].get('name', '')
             file_ext = get_effective_extension(file_path, file_name)
-            file_url = urljoin("https://kemono.su", file_path)
+            file_url = urljoin("https://kemono.cr", file_path)
             if 'f=' not in file_url and file_name:
                 file_url += f"?f={file_name}"
             self.log.emit(translate("log_debug", f"Checking main file: {file_name} ({file_ext})"), "INFO")
@@ -639,7 +639,7 @@ class FilePreparationThread(QThread):
                     attachment_path = attachment['path']
                     attachment_name = attachment.get('name', '')
                     attachment_ext = get_effective_extension(attachment_path, attachment_name)
-                    attachment_url = urljoin("https://kemono.su", attachment_path)
+                    attachment_url = urljoin("https://kemono.cr", attachment_path)
                     if 'f=' not in attachment_url and attachment_name:
                         attachment_url += f"?f={attachment_name}"
                     self.log.emit(translate("log_debug", f"Checking attachment: {attachment_name} ({attachment_ext})"), "INFO")
@@ -653,7 +653,7 @@ class FilePreparationThread(QThread):
         if 'content' in post and post['content']:
             soup = BeautifulSoup(post['content'], 'html.parser')
             for img in soup.select('img[src]'):
-                img_url = urljoin("https://kemono.su", img['src'])
+                img_url = urljoin("https://kemono.cr", img['src'])
                 img_ext = os.path.splitext(img_url)[1].lower() 
                 img_name = os.path.basename(img_url)
                 self.log.emit(translate("log_debug", f"Checking content image: {img_name} ({img_ext})"), "INFO")
@@ -793,7 +793,7 @@ class DownloadThread(QThread):
     def fetch_post_info(self):
         """Fetch post title."""
         parts = self.url.split('/')
-        if len(parts) < 7 or 'kemono.su' not in self.url:
+        if len(parts) < 7 or 'kemono.cr' not in self.url:
             self.log.emit(translate("log_error", "Invalid URL format for fetching post info"), "ERROR")
             return
         service, creator_id, post_id = parts[-5], parts[-3], parts[-1]
@@ -813,7 +813,7 @@ class DownloadThread(QThread):
 
     def extract_service_from_url(self, url):
         parts = url.split('/')
-        if len(parts) >= 5 and 'kemono.su' in url:
+        if len(parts) >= 5 and 'kemono.cr' in url:
             return parts[-5]
         return "unknown_service"
 
@@ -1217,7 +1217,7 @@ class PostDownloaderTab(QWidget):
 
     def check_post_url_validity(self, url):
         parts = url.split('/')
-        if len(parts) < 7 or 'kemono.su' not in url:
+        if len(parts) < 7 or 'kemono.cr' not in url:
             return False
         service, creator_id, post_id = parts[-5], parts[-3], parts[-1]
         api_url = f"{API_BASE}/{service}/user/{creator_id}/post/{post_id}"
@@ -1422,7 +1422,7 @@ class PostDownloaderTab(QWidget):
             file_path = post['file']['path']
             file_name = post['file'].get('name', '')
             file_ext = get_effective_extension(file_path, file_name)
-            file_url = urljoin("https://kemono.su", file_path)
+            file_url = urljoin("https://kemono.cr", file_path)
             if 'f=' not in file_url and file_name:
                 file_url += f"?f={file_name}"
             if '.jpg' in allowed_extensions and file_ext in ['.jpg', '.jpeg']:
@@ -1436,7 +1436,7 @@ class PostDownloaderTab(QWidget):
                     attachment_path = attachment['path']
                     attachment_name = attachment.get('name', '')
                     attachment_ext = get_effective_extension(attachment_path, attachment_name)
-                    attachment_url = urljoin("https://kemono.su", attachment_path)
+                    attachment_url = urljoin("https://kemono.cr", attachment_path)
                     if 'f=' not in attachment_url and attachment_name:
                         attachment_url += f"?f={attachment_name}"
                     if '.jpg' in allowed_extensions and attachment_ext in ['.jpg', '.jpeg']:
@@ -1447,7 +1447,7 @@ class PostDownloaderTab(QWidget):
         if 'content' in post and post['content']:
             soup = BeautifulSoup(post['content'], 'html.parser')
             for img in soup.select('img[src]'):
-                img_url = urljoin("https://kemono.su", img['src'])
+                img_url = urljoin("https://kemono.cr", img['src'])
                 img_ext = os.path.splitext(img_url)[1].lower()
                 img_name = os.path.basename(img_url)
                 if '.jpg' in allowed_extensions and img_ext in ['.jpg', '.jpeg']:
