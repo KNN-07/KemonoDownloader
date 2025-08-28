@@ -83,7 +83,7 @@ class PreviewThread(QThread):
         os.makedirs(self.cache_dir, exist_ok=True)
 
     def run(self):
-        if self.url.lower().endswith(('.jpg', '.jpeg', '.png', '.gif')):
+        if self.url.lower().endswith(('.jpg', '.jpeg', '.png', '.gif', '.webp')):
             cache_key = hashlib.md5(self.url.encode()).hexdigest() + os.path.splitext(self.url)[1]
             cache_path = os.path.join(self.cache_dir, cache_key)
             if os.path.exists(cache_path):
@@ -322,11 +322,11 @@ class PostDetectionThread(QThread):
                 title = post.get('title', f"Post {post_id}")
                 thumbnail_url = None
                 if 'file' in post and post['file'] and 'path' in post['file']:
-                    if post['file']['path'].lower().endswith(('.jpg', '.jpeg', '.png', '.gif')):
+                    if post['file']['path'].lower().endswith(('.jpg', '.jpeg', '.png', '.gif', '.webp')):
                         thumbnail_url = urljoin(self.domain_config['base_url'], post['file']['path'])
                 if not thumbnail_url and 'attachments' in post:
                     for attachment in post['attachments']:
-                        if isinstance(attachment, dict) and 'path' in attachment and attachment['path'].lower().endswith(('.jpg', '.jpeg', '.png', '.gif')):
+                        if isinstance(attachment, dict) and 'path' in attachment and attachment['path'].lower().endswith(('.jpg', '.jpeg', '.png', '.gif', '.webp')):
                             thumbnail_url = urljoin(self.domain_config['base_url'], attachment['path'])
                             break
                 if not thumbnail_url and 'file' in post and post['file'] and 'path' in post['file']:
@@ -1171,7 +1171,8 @@ class CreatorDownloaderTab(QWidget):
             '.docx': QCheckBox("DOCX"),
             '.psd': QCheckBox("PSD"),
             '.clip': QCheckBox("CLIP"),
-            '.jpe':QCheckBox("JPE")
+            '.jpe':QCheckBox("JPE"),
+            '.webp':QCheckBox("WEBP")
         }
         for i, (ext, check) in enumerate(self.creator_ext_checks.items()):
             check.setChecked(True)
@@ -2055,7 +2056,7 @@ class CreatorDownloaderTab(QWidget):
 
     def view_current_item(self):
         if self.current_preview_url:
-            if self.current_preview_url.lower().endswith(('.jpg', '.jpeg', '.png', '.gif')):
+            if self.current_preview_url.lower().endswith(('.jpg', '.jpeg', '.png', '.gif', '.webp')):
                 modal = ImageModal(self.current_preview_url, self.cache_dir, self)
                 modal.exec()
             else:

@@ -94,7 +94,7 @@ class PreviewThread(QThread):
                 if pixmap.load(cache_path):
                     self.preview_ready.emit(self.url, pixmap)
                     return
-            elif ext == '.gif':
+            elif ext in ('.gif', '.webp'):
                 self.preview_ready.emit(self.url, cache_path)
                 return
             else:  
@@ -123,7 +123,7 @@ class PreviewThread(QThread):
                 scaled_pixmap = pixmap.scaled(800, 800, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
                 scaled_pixmap.save(cache_path)
                 self.preview_ready.emit(self.url, scaled_pixmap)
-            elif ext == '.gif':
+            elif ext in ('.gif', '.webp'):
                 self.preview_ready.emit(self.url, cache_path)
             else: 
                 self.preview_ready.emit(self.url, None) 
@@ -241,7 +241,7 @@ class MediaPreviewModal(QDialog):
     def start_preview(self):
         ext = os.path.splitext(self.media_url.lower())[1]
 
-        if ext in ['.jpg', '.jpeg', '.png', '.gif']:
+        if ext in ['.jpg', '.jpeg', '.png', '.gif', '.webp']:
             self.preview_thread = PreviewThread(self.media_url, self.cache_dir)
             self.preview_thread.preview_ready.connect(self.display_image)
             self.preview_thread.progress.connect(self.update_progress)
@@ -297,7 +297,7 @@ class MediaPreviewModal(QDialog):
         self.content_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         ext = os.path.splitext(url.lower())[1]
-        if ext == '.gif':
+        if ext in ('.gif', '.webp'):
             self.movie = QMovie(media)
             if not self.movie.isValid():
                 self.display_error(translate("failed_to_load_gif", url))
@@ -600,7 +600,7 @@ class PostDetectionThread(QThread):
     def detect_files(self, post):
         detected_files = []
         allowed_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.zip', '.mp4', '.pdf', '.7z', 
-                              '.mp3', '.wav', '.rar', '.mov', '.docx', '.psd', '.clip','.jpe']
+                              '.mp3', '.wav', '.rar', '.mov', '.docx', '.psd', '.clip', '.jpe', '.webp']
 
         def get_effective_extension(file_path, file_name):
             name_ext = os.path.splitext(file_name)[1].lower()
@@ -1314,8 +1314,7 @@ class PostDownloaderTab(QWidget):
             '.pdf': QCheckBox("PDF"), '.7z': QCheckBox("7Z"),
             '.mp3': QCheckBox("MP3"), '.wav': QCheckBox("WAV"), '.rar': QCheckBox("RAR"),
             '.mov': QCheckBox("MOV"), '.docx': QCheckBox("DOCX"), '.psd': QCheckBox("PSD"), 
-            '.clip': QCheckBox("CLIP"),
-            '.jpe':QCheckBox("JPE")
+            '.clip': QCheckBox("CLIP"), '.jpe':QCheckBox("JPE"), '.webp':QCheckBox("WEBP")
         }
         for i, (ext, check) in enumerate(self.post_filter_checks.items()):
             check.setChecked(True)
@@ -2181,7 +2180,7 @@ class PostDownloaderTab(QWidget):
         if self.current_preview_url:
             ext = os.path.splitext(self.current_preview_url.lower())[1]
             unsupported_extensions = ['.zip', '.psd', '.docx', '.7z', '.rar', '.clip','jpe']
-            supported_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.mp4', '.mov', '.mp3', '.wav']
+            supported_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.mp4', '.mov', '.mp3', '.wav', '.webp']
 
             if ext in unsupported_extensions:
                 self.append_log_to_console(translate("log_warning", translate("preview_not_supported", ext, self.current_preview_url)), "WARNING")
