@@ -22,6 +22,18 @@ import asyncio
 import aiohttp
 from aiohttp import ClientSession, ClientTimeout
 
+
+class ThreadSettings:
+    """Settings container for thread operations"""
+    def __init__(self, creator_posts_max_attempts, post_data_max_retries,
+                 file_download_max_retries, api_request_max_retries, simultaneous_downloads):
+        self.creator_posts_max_attempts = creator_posts_max_attempts
+        self.post_data_max_retries = post_data_max_retries
+        self.file_download_max_retries = file_download_max_retries
+        self.api_request_max_retries = api_request_max_retries
+        self.simultaneous_downloads = simultaneous_downloads
+
+
 try:
     locale.setlocale(locale.LC_ALL, '')
 except locale.Error:
@@ -156,10 +168,11 @@ class PostDetectionThread(QThread):
     log = pyqtSignal(str, str)
     error = pyqtSignal(str)
 
-    def __init__(self, url, post_titles_map):
+    def __init__(self, url, post_titles_map, settings):
         super().__init__()
         self.url = url
         self.post_titles_map = post_titles_map  # Shared dictionary to store post titles
+        self.settings = settings
         self.is_running = True
         self.domain_config = get_domain_config(url)
 
@@ -184,7 +197,7 @@ class PostDetectionThread(QThread):
         all_posts = []
         offset = 0
         page_size = 50
-        max_attempts = 200
+        max_attempts = self.settings.creator_posts_max_attempts
 
         attempt = 1
         while attempt <= max_attempts and self.is_running:
@@ -390,7 +403,7 @@ class FilePreparationThread(QThread):
     log = pyqtSignal(str, str)
     error = pyqtSignal(str)
 
-    def __init__(self, post_ids, all_files_map, creator_ext_checks, creator_main_check, creator_attachments_check, creator_content_check, max_concurrent=20):
+    def __init__(self, post_ids, all_files_map, creator_ext_checks, creator_main_check, creator_attachments_check, creator_content_check, settings, max_concurrent=20):
         super().__init__()
         self.post_ids = post_ids
         self.all_files_map = all_files_map
@@ -398,6 +411,7 @@ class FilePreparationThread(QThread):
         self.creator_main_check = creator_main_check
         self.creator_attachments_check = creator_attachments_check
         self.creator_content_check = creator_content_check
+        self.settings = settings
         self.max_concurrent = max_concurrent
         self.is_running = True
 
@@ -470,7 +484,7 @@ class FilePreparationThread(QThread):
         service, creator_id = parts[-3], parts[-1]
         domain_config = get_domain_config(creator_url)
         api_url = f"{domain_config['api_base']}/{service}/user/{creator_id}/post/{post_id}"
-        max_retries = 50
+        max_retries = self.settings.post_data_max_retries
         retry_delay_seconds = 5
         for attempt in range(1, max_retries + 1):
             try:
@@ -579,7 +593,7 @@ class CreatorDownloadThread(QThread):
     log = pyqtSignal(str, str)
     finished = pyqtSignal()
 
-    def __init__(self, service, creator_id, download_folder, selected_posts, files_to_download, files_to_posts_map, console, other_files_dir, post_titles_map, auto_rename_enabled, max_concurrent=20):
+    def __init__(self, service, creator_id, download_folder, selected_posts, files_to_download, files_to_posts_map, console, other_files_dir, post_titles_map, auto_rename_enabled, settings, max_concurrent=20):
         super().__init__()
         self.service = service
         self.creator_id = creator_id
@@ -588,6 +602,7 @@ class CreatorDownloadThread(QThread):
         self.files_to_download = files_to_download
         self.files_to_posts_map = files_to_posts_map
         self.console = console
+        self.settings = settings
         self.is_running = True
         self.other_files_dir = other_files_dir
         self.hash_file_path = os.path.join(self.other_files_dir, "file_hashes.json")
@@ -736,7 +751,7 @@ class CreatorDownloadThread(QThread):
 
         self.log.emit(translate("log_info", translate("starting_download", file_index + 1, total_files, file_url, post_folder)), "INFO")
         
-        max_retries = 50
+        max_retries = self.settings.file_download_max_retries
         file_handle = None
         for attempt in range(1, max_retries + 1):
             try:
@@ -893,9 +908,10 @@ class ValidationThread(QThread):
     result = pyqtSignal(bool)
     log = pyqtSignal(str, str)
 
-    def __init__(self, url):
+    def __init__(self, url, settings):
         super().__init__()
         self.url = url
+        self.settings = settings
         self.is_running = True
         self.domain_config = get_domain_config(url)
 
@@ -912,7 +928,7 @@ class ValidationThread(QThread):
             self.result.emit(False)
             return
             
-        max_retries = 3
+        max_retries = self.settings.api_request_max_retries
         retry_delay = 2
         
         for attempt in range(1, max_retries + 1):
@@ -1096,6 +1112,16 @@ class CreatorDownloaderTab(QWidget):
         self.setup_ui()
         self.parent.settings_tab.settings_applied.connect(self.refresh_ui)
         self.parent.settings_tab.language_changed.connect(self.update_ui_text)
+
+    def _create_thread_settings(self):
+        """Create a ThreadSettings object with current settings values"""
+        return ThreadSettings(
+            creator_posts_max_attempts=self.parent.settings_tab.get_creator_posts_max_attempts(),
+            post_data_max_retries=self.parent.settings_tab.get_post_data_max_retries(),
+            file_download_max_retries=self.parent.settings_tab.get_file_download_max_retries(),
+            api_request_max_retries=self.parent.settings_tab.get_api_request_max_retries(),
+            simultaneous_downloads=self.parent.settings_tab.get_simultaneous_downloads()
+        )
 
     def setup_ui(self):
         layout = QHBoxLayout(self)
@@ -1358,7 +1384,7 @@ class CreatorDownloaderTab(QWidget):
             return
         self.background_task_label.setText(translate("validating_url"))
         self.background_task_progress.setRange(0, 0)
-        self.validation_thread = ValidationThread(url)
+        self.validation_thread = ValidationThread(url, self._create_thread_settings())
         self.validation_thread.result.connect(lambda valid: self.on_validation_finished(url, valid))
         self.validation_thread.log.connect(self.append_log_to_console)
         self.validation_thread.finished.connect(self.cleanup_validation_thread)
@@ -1478,7 +1504,7 @@ class CreatorDownloaderTab(QWidget):
                 return
             self.background_task_label.setText(translate("detecting_posts"))
             self.background_task_progress.setRange(0, 0)
-            self.post_detection_thread = PostDetectionThread(url, self.post_titles_map)
+            self.post_detection_thread = PostDetectionThread(url, self.post_titles_map, self._create_thread_settings())
             self.post_detection_thread.finished.connect(self.on_post_detection_finished)
             self.post_detection_thread.log.connect(self.append_log_to_console)
             self.post_detection_thread.error.connect(self.on_post_detection_error)
@@ -1598,6 +1624,7 @@ class CreatorDownloaderTab(QWidget):
             self.creator_main_check.isChecked(),
             self.creator_attachments_check.isChecked(),
             self.creator_content_check.isChecked(),
+            self._create_thread_settings(),
             max_concurrent=5
         )
         self.file_preparation_thread.progress.connect(self.update_background_progress)
@@ -1637,11 +1664,11 @@ class CreatorDownloaderTab(QWidget):
         self.creator_overall_progress_label.setText(
             translate("overall_progress", 0, self.total_files_to_download, 0, self.total_posts_to_download)
         )
-        max_concurrent = self.parent.settings_tab.get_simultaneous_downloads()
-        thread = CreatorDownloadThread(service, creator_id, self.parent.download_folder, 
-                                    self.posts_to_download, files_to_download, files_to_posts_map, 
-                                    self.creator_console, self.other_files_dir, self.post_titles_map, 
-                                    self.creator_auto_rename_check.isChecked(), max_concurrent)
+        settings = self._create_thread_settings()
+        thread = CreatorDownloadThread(service, creator_id, self.parent.download_folder,
+                                    self.posts_to_download, files_to_download, files_to_posts_map,
+                                    self.creator_console, self.other_files_dir, self.post_titles_map,
+                                    self.creator_auto_rename_check.isChecked(), settings, settings.simultaneous_downloads)
         thread.file_progress.connect(self.update_creator_file_progress)
         thread.file_completed.connect(self.update_file_completion)
         thread.post_completed.connect(self.update_post_completion)

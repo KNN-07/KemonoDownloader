@@ -23,6 +23,18 @@ import ctypes
 from fake_useragent import UserAgent
 import gzip
 
+
+class ThreadSettings:
+    """Settings container for thread operations"""
+    def __init__(self, creator_posts_max_attempts, post_data_max_retries,
+                 file_download_max_retries, api_request_max_retries, simultaneous_downloads):
+        self.creator_posts_max_attempts = creator_posts_max_attempts
+        self.post_data_max_retries = post_data_max_retries
+        self.file_download_max_retries = file_download_max_retries
+        self.api_request_max_retries = api_request_max_retries
+        self.simultaneous_downloads = simultaneous_downloads
+
+
 try:
     locale.setlocale(locale.LC_ALL, '')
 except locale.Error:
@@ -512,9 +524,10 @@ class PostDetectionThread(QThread):
     error = pyqtSignal(str)
     file_detected = pyqtSignal(list)
 
-    def __init__(self, url):
+    def __init__(self, url, settings):
         super().__init__()
         self.url = url
+        self.settings = settings
         self.is_running = True
         self.domain_config = get_domain_config(url)
 
@@ -559,7 +572,9 @@ class PostDetectionThread(QThread):
             self.error.emit(translate("failed_to_fetch_post_error", str(e)))
             return
 
-    def make_robust_request(self, url, max_retries=3):
+    def make_robust_request(self, url, max_retries=None):
+        if max_retries is None:
+            max_retries = self.settings.api_request_max_retries
         for attempt in range(max_retries):
             try:
                 response = requests.get(url, headers=HEADERS, timeout=10)
@@ -646,12 +661,13 @@ class FilePreparationThread(QThread):
     log = pyqtSignal(str, str)
     error = pyqtSignal(str)
 
-    def __init__(self, post_ids, all_files_map, post_ext_checks, file_url_map, url, max_concurrent=10):
+    def __init__(self, post_ids, all_files_map, post_ext_checks, file_url_map, url, settings, max_concurrent=10):
         super().__init__()
         self.post_ids = post_ids
         self.all_files_map = all_files_map
         self.post_ext_checks = post_ext_checks
         self.file_url_map = file_url_map
+        self.settings = settings
         self.max_concurrent = max_concurrent
         self.is_running = True
         self.url = url
@@ -719,7 +735,9 @@ class FilePreparationThread(QThread):
         self.log.emit(translate("log_debug", f"Total files detected: {len(files_to_download)}"), "INFO")
         return list(dict.fromkeys(files_to_download))
 
-    def fetch_post_data(self, post_id, max_retries=3, retry_delay_seconds=5):
+    def fetch_post_data(self, post_id, max_retries=None, retry_delay_seconds=5):
+        if max_retries is None:
+            max_retries = self.settings.post_data_max_retries
         parts = self.url.split('/')
         service, creator_id = parts[-5], parts[-3]
         api_url = f"{self.domain_config['api_base']}/{service}/user/{creator_id}/post/{post_id}"
@@ -756,7 +774,9 @@ class FilePreparationThread(QThread):
                     self.log.emit(translate("log_info", f"Trying again in {i}"), "INFO")
                     time.sleep(1)
 
-    def make_robust_request(self, url, max_retries=3):
+    def make_robust_request(self, url, max_retries=None):
+        if max_retries is None:
+            max_retries = self.settings.api_request_max_retries
         for attempt in range(max_retries):
             try:
                 response = requests.get(url, headers=HEADERS, timeout=10)
@@ -852,12 +872,13 @@ class DownloadThread(QThread):
     log = pyqtSignal(str, str)
     finished = pyqtSignal()
 
-    def __init__(self, url, download_folder, selected_files, files_to_posts_map, console, other_files_dir, post_id, max_concurrent=5, auto_rename=False):
+    def __init__(self, url, download_folder, selected_files, files_to_posts_map, console, other_files_dir, post_id, settings, max_concurrent=5, auto_rename=False):
         super().__init__()
         self.url = url
         self.domain_config = get_domain_config(url)
         self.download_folder = download_folder
         self.selected_files = selected_files
+        self.settings = settings
         self.files_to_posts_map = files_to_posts_map
         self.console = console
         self.is_running = True
@@ -893,7 +914,9 @@ class DownloadThread(QThread):
             self.log.emit(translate("log_error", f"Error fetching post info: {str(e)}"), "ERROR")
             self.post_title = f"Post_{post_id}"
 
-    def make_robust_request(self, url, max_retries=3):
+    def make_robust_request(self, url, max_retries=None):
+        if max_retries is None:
+            max_retries = self.settings.api_request_max_retries
         for attempt in range(max_retries):
             try:
                 response = requests.get(url, headers=HEADERS, timeout=10)
@@ -1002,7 +1025,7 @@ class DownloadThread(QThread):
 
         self.log.emit(translate("log_info", translate("starting_download", file_index + 1, total_files, file_url, post_folder)), "INFO")
         
-        max_retries = 50
+        max_retries = self.settings.file_download_max_retries
         for attempt in range(1, max_retries + 1):
             try:
                 response = requests.get(file_url, headers=HEADERS, stream=True)
@@ -1198,6 +1221,16 @@ class PostDownloaderTab(QWidget):
         self.setup_ui()
         self.parent.settings_tab.settings_applied.connect(self.refresh_ui)
         self.parent.settings_tab.language_changed.connect(self.update_ui_text)
+
+    def _create_thread_settings(self):
+        """Create a ThreadSettings object with current settings values"""
+        return ThreadSettings(
+            creator_posts_max_attempts=self.parent.settings_tab.get_creator_posts_max_attempts(),
+            post_data_max_retries=self.parent.settings_tab.get_post_data_max_retries(),
+            file_download_max_retries=self.parent.settings_tab.get_file_download_max_retries(),
+            api_request_max_retries=self.parent.settings_tab.get_api_request_max_retries(),
+            simultaneous_downloads=self.parent.settings_tab.get_simultaneous_downloads()
+        )
 
     def setup_ui(self):
         layout = QHBoxLayout(self)
@@ -1565,7 +1598,7 @@ class PostDownloaderTab(QWidget):
         else:
             self.background_task_label.setText(translate("detecting_post"))
             self.background_task_progress.setRange(0, 0)
-            self.post_detection_thread = PostDetectionThread(url)
+            self.post_detection_thread = PostDetectionThread(url, self._create_thread_settings())
             self.post_detection_thread.finished.connect(self.on_post_detection_finished)
             self.post_detection_thread.log.connect(self.append_log_to_console)
             self.post_detection_thread.error.connect(self.on_post_detection_error)
@@ -1621,7 +1654,10 @@ class PostDownloaderTab(QWidget):
         except Exception as e:
             self.append_log_to_console(translate("log_error", f"Error fetching files for post {url}: {str(e)}"), "ERROR")
 
-    def make_robust_request(self, url, max_retries=3):
+    def make_robust_request(self, url, max_retries=None):
+        if max_retries is None:
+            settings = self._create_thread_settings()
+            max_retries = settings.api_request_max_retries
         for attempt in range(max_retries):
             try:
                 response = requests.get(url, headers=HEADERS, timeout=10)
@@ -1714,7 +1750,7 @@ class PostDownloaderTab(QWidget):
             if url not in self.all_files_map:
                 self.background_task_label.setText(translate("detecting_posts"))
                 self.background_task_progress.setRange(0, 0)
-                thread = PostDetectionThread(url)
+                thread = PostDetectionThread(url, self._create_thread_settings())
                 thread.finished.connect(lambda posts, u=url: self.on_check_all_posts_detected(u, posts))
                 thread.file_detected.connect(self.on_files_detected_during_check_all)
                 thread.log.connect(self.append_log_to_console)
@@ -1821,6 +1857,7 @@ class PostDownloaderTab(QWidget):
             self.post_filter_checks,
             self.file_url_map,
             urls[0] if urls else "",
+            self._create_thread_settings(),
             max_concurrent=5
         )
         self.file_preparation_thread.url = urls[0] if urls else None
@@ -1867,10 +1904,11 @@ class PostDownloaderTab(QWidget):
         parts = url.split('/')
         post_id = parts[-1]
 
-        max_concurrent = self.parent.settings_tab.get_simultaneous_downloads()
+        settings = self._create_thread_settings()
+        max_concurrent = settings.simultaneous_downloads
         auto_rename = self.auto_rename_checkbox.isChecked()
-        self.thread = DownloadThread(url, self.parent.download_folder, checked_files, files_to_posts_map, 
-                                    self.post_console, self.other_files_dir, post_id, max_concurrent, auto_rename)
+        self.thread = DownloadThread(url, self.parent.download_folder, checked_files, files_to_posts_map,
+                                    self.post_console, self.other_files_dir, post_id, settings, max_concurrent, auto_rename)
         self.active_threads.append(self.thread)
         self.thread.file_progress.connect(self.update_file_progress)
         self.thread.file_completed.connect(self.update_file_completion)
