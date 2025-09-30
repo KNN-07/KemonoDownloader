@@ -1811,19 +1811,24 @@ class CreatorDownloaderTab(QWidget):
     def update_file_completion(self, file_index, file_url, success):
         """Update file completion status and check overall progress."""
         with self.completed_files_lock, self.failed_files_lock:
-            if file_url not in self.completed_files and file_url not in self.failed_files:
-                if success:
+            if success:
+                if file_url not in self.completed_files:
                     self.completed_files.add(file_url)
+                # Remove from failed_files if it was there before
+                if file_url in self.failed_files:
+                    del self.failed_files[file_url]
                 self.append_log_to_console(translate("log_debug", translate("file_completed", file_url, len(self.completed_files), self.total_files_to_download)), "INFO")
             else:
-                # Find the CreatorDownloadThread to get the error message
-                error_message = "Unknown error"
-                for thread in self.active_threads:
-                    if isinstance(thread, CreatorDownloadThread):
-                        error_message = thread.failed_files.get(file_url, "Unknown error")
-                        break
-                self.failed_files[file_url] = error_message
-                self.append_log_to_console(translate("log_debug", translate("file_failed", file_url, len(self.failed_files))), "INFO")
+                # Only mark as failed if not already completed
+                if file_url not in self.completed_files:
+                    # Find the CreatorDownloadThread to get the error message
+                    error_message = "Unknown error"
+                    for thread in self.active_threads:
+                        if isinstance(thread, CreatorDownloadThread):
+                            error_message = thread.failed_files.get(file_url, "Unknown error")
+                            break
+                    self.failed_files[file_url] = error_message
+                    self.append_log_to_console(translate("log_debug", translate("file_failed", file_url, len(self.failed_files))), "INFO")
             self.update_overall_progress()
             # Check if all files have been attempted (successful or failed)
             if self.total_files_to_download > 0 and len(self.completed_files) + len(self.failed_files) >= self.total_files_to_download:
