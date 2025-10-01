@@ -15,6 +15,10 @@ from kemonodownloader.creator_downloader import CreatorDownloaderTab
 from kemonodownloader.kd_settings import SettingsTab
 from kemonodownloader.kd_help import HelpTab
 from kemonodownloader.kd_language import translate, language_manager
+from bs4 import MarkupResemblesLocatorWarning
+import warnings
+
+warnings.filterwarnings("ignore", category=MarkupResemblesLocatorWarning)
 
 CURRENT_VERSION = "5.3.0"
 GITHUB_REPO = "VoxDroid/KemonoDownloader"
