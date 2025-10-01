@@ -1,5 +1,12 @@
 # Kemono Downloader Release Notes
 
+## v5.4.0 (10 September 2025)
+**feat: Added customizable retry count settings, fix thread settings, and improved download handling**
+- [#39](https://github.com/VoxDroid/KemonoDownloader/pull/39) Add home folder permissions for Flatpak
+- [#42](https://github.com/VoxDroid/KemonoDownloader/pull/42) Added customizable retry count settings in the settings page, removing the hardcoded values.
+- [#44](https://github.com/VoxDroid/KemonoDownloader/pull/44) Improved download handling, counting and fetching files.
+- Suppress MarkupResemblesLocatorWarning from BeautifulSoup
+
 ## v5.3.0 (28 August 2025)
 **feat: Add .webp support for image previews and filters**
 - Extended image preview, detection, and filter logic in creator_downloader.py and post_downloader.py to include .webp files alongside existing image formats.

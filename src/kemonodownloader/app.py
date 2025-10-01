@@ -20,7 +20,7 @@ import warnings
 
 warnings.filterwarnings("ignore", category=MarkupResemblesLocatorWarning)
 
-CURRENT_VERSION = "5.3.0"
+CURRENT_VERSION = "5.4.0"
 GITHUB_REPO = "VoxDroid/KemonoDownloader"
 
 class VersionChecker(QThread):
