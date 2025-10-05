@@ -22,6 +22,7 @@ import locale
 import ctypes
 from fake_useragent import UserAgent
 import gzip
+import threading
 
 
 class ThreadSettings:
@@ -892,6 +893,9 @@ class DownloadThread(QThread):
         self.completed_files = set()
         self.post_title = None  # Store post title
         self.auto_rename = auto_rename
+        # Locks for thread-safe access to shared dictionaries
+        self.file_hashes_lock = threading.Lock()
+        self.completed_files_lock = threading.Lock()
 
     def fetch_post_info(self):
         """Fetch post title."""
@@ -1007,19 +1011,24 @@ class DownloadThread(QThread):
         full_path = os.path.join(post_folder, filename.replace('/', '_'))
         url_hash = hashlib.md5(file_url.encode()).hexdigest()
 
-        file_hashes_keys = list(self.file_hashes.keys())
+        with self.file_hashes_lock:
+            file_hashes_keys = list(self.file_hashes.keys())
+
         for hash_key in file_hashes_keys:
             if hash_key == url_hash:
-                existing_path = self.file_hashes[hash_key]["file_path"]
+                with self.file_hashes_lock:
+                    existing_path = self.file_hashes[hash_key]["file_path"]
                 if os.path.exists(existing_path):
                     with open(existing_path, 'rb') as f:
                         file_hash = hashlib.md5(f.read()).hexdigest()
-                    stored_hash = self.file_hashes[hash_key]["file_hash"]
+                    with self.file_hashes_lock:
+                        stored_hash = self.file_hashes[hash_key]["file_hash"]
                     if file_hash == stored_hash:
                         self.log.emit(translate("log_info", translate("file_already_downloaded", filename, existing_path)), "INFO")
                         self.file_progress.emit(file_index, 100)
                         self.file_completed.emit(file_index, file_url)
-                        self.completed_files.add(file_url)
+                        with self.completed_files_lock:
+                            self.completed_files.add(file_url)
                         self.check_post_completion(file_url)
                         return
 
@@ -1047,16 +1056,32 @@ class DownloadThread(QThread):
                             if progress == 100:
                                 self.file_completed.emit(file_index, file_url)
 
+                # Validate downloaded size matches content-length
+                if file_size > 0 and downloaded_size != file_size:
+                    error_msg = translate("size_mismatch_error", downloaded_size, file_size, file_url)
+                    self.log.emit(translate("log_warning", error_msg), "WARNING")
+                    # Delete incomplete file
+                    if os.path.exists(full_path):
+                        try:
+                            os.remove(full_path)
+                            self.log.emit(translate("log_info", translate("deleted_incomplete_file", full_path)), "INFO")
+                        except OSError as e:
+                            self.log.emit(translate("log_error", translate("failed_to_delete_incomplete_file", full_path, str(e))), "ERROR")
+                    # Raise exception to trigger retry
+                    raise Exception(f"Size mismatch: downloaded {downloaded_size} bytes, expected {file_size} bytes")
+
                 with open(full_path, 'rb') as f:
                     file_hash = hashlib.md5(f.read()).hexdigest()
-                self.file_hashes[url_hash] = {
-                    "file_path": full_path,
-                    "file_hash": file_hash,
-                    "url": file_url
-                }
-                self.save_hashes()
+                with self.file_hashes_lock:
+                    self.file_hashes[url_hash] = {
+                        "file_path": full_path,
+                        "file_hash": file_hash,
+                        "url": file_url
+                    }
+                    self.save_hashes()
                 self.log.emit(translate("log_info", translate("successfully_downloaded", full_path)), "INFO")
-                self.completed_files.add(file_url)
+                with self.completed_files_lock:
+                    self.completed_files.add(file_url)
                 self.check_post_completion(file_url)
                 return
 

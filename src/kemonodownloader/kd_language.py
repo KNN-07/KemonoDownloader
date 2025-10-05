@@ -823,6 +823,24 @@ class KDLanguage:
                 "korean": "{1}번의 시도 후 {0} 다운로드 실패: {2}",
                 "chinese-simplified": "尝试 {1} 次后下载 {0} 失败: {2}"
             },
+            "size_mismatch_error": {
+                "english": "Downloaded size ({0} bytes) does not match expected size ({1} bytes) for {2}",
+                "japanese": "ダウンロードサイズ（{0}バイト）が予期されるサイズ（{1}バイト）と一致しません：{2}",
+                "korean": "다운로드된 크기({0}바이트)가 예상 크기({1}바이트)와 일치하지 않습니다: {2}",
+                "chinese-simplified": "下载大小（{0}字节）与预期大小（{1}字节）不匹配：{2}"
+            },
+            "deleted_incomplete_file": {
+                "english": "Deleted incomplete file: {0}",
+                "japanese": "不完全なファイルを削除しました：{0}",
+                "korean": "불완전한 파일 삭제됨: {0}",
+                "chinese-simplified": "已删除不完整的文件：{0}"
+            },
+            "failed_to_delete_incomplete_file": {
+                "english": "Failed to delete incomplete file {0}: {1}",
+                "japanese": "不完全なファイル{0}の削除に失敗しました：{1}",
+                "korean": "불완전한 파일 {0} 삭제 실패: {1}",
+                "chinese-simplified": "删除不完整的文件 {0} 失败：{1}"
+            },
             "retry_countdown": {
                 "english": "Trying again in {0}...",
                 "japanese": "{0}秒後に再試行します...",

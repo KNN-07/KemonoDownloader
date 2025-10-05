@@ -801,6 +801,21 @@ class CreatorDownloadThread(QThread):
 
                     file_handle.close()
                     file_handle = None
+
+                    # Validate downloaded size matches content-length
+                    if file_size > 0 and downloaded_size != file_size:
+                        error_msg = translate("size_mismatch_error", downloaded_size, file_size, file_url)
+                        self.log.emit(translate("log_warning", error_msg), "WARNING")
+                        # Delete incomplete file
+                        if os.path.exists(full_path):
+                            try:
+                                os.remove(full_path)
+                                self.log.emit(translate("log_info", translate("deleted_incomplete_file", full_path)), "INFO")
+                            except OSError as e:
+                                self.log.emit(translate("log_error", translate("failed_to_delete_incomplete_file", full_path, str(e))), "ERROR")
+                        # Raise exception to trigger retry
+                        raise Exception(f"Size mismatch: downloaded {downloaded_size} bytes, expected {file_size} bytes")
+
                     with open(full_path, 'rb') as f:
                         file_hash = hashlib.md5(f.read()).hexdigest()
                     with self.file_hashes_lock:
