@@ -82,6 +82,22 @@ HEADERS = {
 }
 API_BASE = "https://kemono.cr/api/v1"
 
+# Create a shared session for connection pooling
+def get_session():
+    """Get or create a requests session with connection pooling"""
+    if not hasattr(get_session, 'session'):
+        get_session.session = requests.Session()
+        # Configure connection pool
+        adapter = requests.adapters.HTTPAdapter(
+            pool_connections=20,
+            pool_maxsize=20,
+            max_retries=3,
+            pool_block=False
+        )
+        get_session.session.mount('http://', adapter)
+        get_session.session.mount('https://', adapter)
+    return get_session.session
+
 class PreviewThread(QThread):
     preview_ready = pyqtSignal(str, object)
     progress = pyqtSignal(int)
@@ -106,7 +122,7 @@ class PreviewThread(QThread):
                     return
 
             try:
-                response = requests.get(self.url, headers=HEADERS, stream=True)
+                response = get_session().get(self.url, headers=HEADERS, stream=True)
                 response.raise_for_status()
                 self.total_size = int(response.headers.get('content-length', 0)) or 1
                 downloaded_data = bytearray()
@@ -229,7 +245,7 @@ class PostDetectionThread(QThread):
                 }
                 
                 try:
-                    alt_response = requests.get(alt_url, headers=fallback_headers, timeout=15)
+                    alt_response = get_session().get(alt_url, headers=fallback_headers, timeout=15)
                     if alt_response.status_code == 200:
                         response = alt_response
                         self.log.emit(translate("log_info", translate("endpoint_successful", alt_url)), "INFO")
@@ -491,7 +507,7 @@ class FilePreparationThread(QThread):
             try:
                 headers = HEADERS.copy()
                 headers['Referer'] = domain_config['referer']
-                response = requests.get(api_url, headers=headers)
+                response = get_session().get(api_url, headers=headers)
                 if response.status_code != 200:
                     if response.status_code == 429 and attempt < max_retries:
                         self.log.emit(translate("log_warning", translate("rate_limit_hit", api_url, attempt, max_retries)), "WARNING")
@@ -664,7 +680,7 @@ class CreatorDownloadThread(QThread):
         try:
             headers = HEADERS.copy()
             headers['Referer'] = self.domain_config['referer']
-            profile_response = requests.get(profile_url, headers=headers, timeout=10)
+            profile_response = get_session().get(profile_url, headers=headers, timeout=10)
             if profile_response.status_code == 200:
                 profile_data = profile_response.json()
                 self.creator_name = sanitize_filename(profile_data.get('name', 'Unknown_Creator'))
@@ -682,7 +698,7 @@ class CreatorDownloadThread(QThread):
                 try:
                     headers = HEADERS.copy()
                     headers['Referer'] = self.domain_config['referer']
-                    response = requests.get(post_url, headers=headers, timeout=10)
+                    response = get_session().get(post_url, headers=headers, timeout=10)
                     if response.status_code == 200:
                         post_data = response.json()
                         title = post_data.get('title', f"Post_{post_id}")
@@ -962,8 +978,8 @@ class ValidationThread(QThread):
                     'Cache-Control': 'max-age=0',
                     'Referer': self.domain_config['referer']
                 }
-                
-                direct_response = requests.get(self.url, headers=fallback_headers, timeout=10)
+
+                direct_response = get_session().get(self.url, headers=fallback_headers, timeout=10)
                 domain_check = self.domain_config['domain'].split('.')[0]  # 'kemono' or 'coomer'
                 if direct_response.status_code == 200 and domain_check in direct_response.text.lower():
                     self.log.emit(translate("log_info", translate("successfully_validated_url", self.url)), "INFO")
@@ -1025,39 +1041,59 @@ class LogsWindow(QDialog):
         self.setModal(False)
         self.resize(800, 600)
         self.setStyleSheet("background: #1A2B4A; color: white;")
-        
+
         layout = QVBoxLayout(self)
-        
+
         # Logs display
         self.logs_display = QTextEdit()
         self.logs_display.setReadOnly(True)
         self.logs_display.setStyleSheet("background: #2A3B5A; border-radius: 5px; padding: 5px;")
         layout.addWidget(self.logs_display)
-        
+
         # Buttons layout
         buttons_layout = QHBoxLayout()
-        
+
         self.clear_logs_btn = QPushButton(translate("clear_logs"))
         self.clear_logs_btn.clicked.connect(self.clear_logs)
         self.clear_logs_btn.setStyleSheet("background: #4A5B7A; padding: 8px; border-radius: 5px;")
         buttons_layout.addWidget(self.clear_logs_btn)
-        
+
         self.download_logs_btn = QPushButton(translate("download_logs"))
         self.download_logs_btn.clicked.connect(self.download_logs)
         self.download_logs_btn.setStyleSheet("background: #4A5B7A; padding: 8px; border-radius: 5px;")
         buttons_layout.addWidget(self.download_logs_btn)
-        
+
         buttons_layout.addStretch()
         layout.addLayout(buttons_layout)
-        
+
+        # Batch update with timer to reduce UI updates
+        from PyQt6.QtCore import QTimer
+        self.update_timer = QTimer()
+        self.update_timer.timeout.connect(self._do_update)
+        self.update_timer.setInterval(500)  # Update every 500ms instead of every log
+        self.needs_update = False
+
         # Update logs content
         self.update_logs_content()
     
     def update_logs_content(self):
-        """Update the logs display with current console content"""
-        if self.parent and hasattr(self.parent, 'creator_console'):
+        """Schedule a batched update instead of updating immediately"""
+        self.needs_update = True
+        if not self.update_timer.isActive():
+            self.update_timer.start()
+
+    def _do_update(self):
+        """Actually perform the update (called by timer)"""
+        if self.needs_update and self.parent and hasattr(self.parent, 'creator_console'):
             self.logs_display.setHtml(self.parent.creator_console.toHtml())
+            self.needs_update = False
     
+    def closeEvent(self, event):
+        """Stop timer when window closes"""
+        if hasattr(self, 'update_timer'):
+            self.update_timer.stop()
+        event.accept()
+
     def clear_logs(self):
         """Clear both the logs window and parent console"""
         self.logs_display.clear()
@@ -1129,6 +1165,7 @@ class CreatorDownloaderTab(QWidget):
         self.file_preparation_thread = None
         self.checkbox_toggle_thread = None
         self.post_titles_map = {}
+        self.post_widget_cache = {}  # Maps post_title -> (item, widget) for O(1) lookups
         os.makedirs(self.cache_dir, exist_ok=True)
         os.makedirs(self.other_files_dir, exist_ok=True)
         self.setup_ui()
@@ -1454,6 +1491,7 @@ class CreatorDownloaderTab(QWidget):
                     self.append_log_to_console(translate("log_info", translate("link_removed", url)), "INFO")
                     if not any(c for _, c in self.creator_queue):
                         self.creator_post_list.clear()
+                        self.post_widget_cache.clear()
                         self.all_detected_posts = []
                         self.posts_to_download = []
                         self.post_url_map = {}
@@ -1508,8 +1546,9 @@ class CreatorDownloaderTab(QWidget):
         self.current_creator_url = url
         self.checked_urls.clear()
         self.posts_to_download = []
-        
+
         self.creator_post_list.clear()
+        self.post_widget_cache.clear()
         self.previous_selected_widget = None
         
         if url in self.all_files_map:
@@ -1916,12 +1955,10 @@ class CreatorDownloaderTab(QWidget):
             self.append_log_to_console(translate("log_warning", translate("checkbox_toggle_already_in_progress")), "WARNING")
             return
         
-        # Get the currently visible posts from creator_post_list
+        # Get the currently visible posts from cache
         visible_posts = []
-        for i in range(self.creator_post_list.count()):
-            item = self.creator_post_list.item(i)
+        for post_title, (item, widget) in self.post_widget_cache.items():
             if not item.isHidden():  # Only include visible items
-                post_title = self.creator_post_list.itemWidget(item).label.text()
                 post_id, thumbnail_url = self.post_url_map.get(post_title, (None, None))
                 if post_id:
                     visible_posts.append((post_title, (post_id, thumbnail_url)))
@@ -1987,6 +2024,7 @@ class CreatorDownloaderTab(QWidget):
 
     def on_filter_finished(self, filtered_items):
         self.creator_post_list.clear()
+        self.post_widget_cache.clear()
         self.previous_selected_widget = None
         self.post_url_map = {}
         for post_title, post_id, thumbnail_url, is_checked in filtered_items:
@@ -2053,6 +2091,9 @@ class CreatorDownloaderTab(QWidget):
         widget.label = label
         widget.setStyleSheet("background-color: #2A3B5A; border-radius: 5px;")
 
+        # Cache the widget for O(1) lookups
+        self.post_widget_cache[text] = (item, widget)
+
     def toggle_checkbox_state(self, post_title):
         self.background_task_label.setText(translate("toggling_checkbox"))
         self.background_task_progress.setRange(0, 0)
@@ -2079,18 +2120,20 @@ class CreatorDownloaderTab(QWidget):
         self.background_task_label.setText(translate("idle"))
 
     def get_widget_for_post_title(self, post_title):
-        for i in range(self.creator_post_list.count()):
-            item = self.creator_post_list.item(i)
-            widget = self.creator_post_list.itemWidget(item)
-            if widget and widget.label.text() == post_title:
-                return widget
+        # O(1) lookup instead of O(n) iteration
+        cached = self.post_widget_cache.get(post_title)
+        if cached:
+            return cached[1]  # Return widget
         return None
 
     def update_check_all_state(self):
-        all_visible_checked = all(
-            self.creator_post_list.itemWidget(self.creator_post_list.item(i)).check_box.isChecked()
-            for i in range(self.creator_post_list.count()) if not self.creator_post_list.item(i).isHidden()
-        ) and self.creator_post_list.count() > 0
+        # Only iterate visible items from cache
+        visible_checked = []
+        for post_title, (item, widget) in self.post_widget_cache.items():
+            if not item.isHidden():
+                visible_checked.append(widget.check_box.isChecked())
+
+        all_visible_checked = all(visible_checked) and len(visible_checked) > 0
         self.creator_check_all.blockSignals(True)
         self.creator_check_all.setChecked(all_visible_checked)
         self.creator_check_all.blockSignals(False)
