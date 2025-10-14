@@ -1862,19 +1862,17 @@ class CreatorDownloaderTab(QWidget):
             self.creator_file_progress.setValue(progress)
             self.creator_file_progress_label.setText(translate("file_progress", progress))
 
-    def update_file_completion(self, file_index, file_url, success):
+    def update_file_completion(self, file_index, file_url, success, file_path=""):
         """Update file completion status and check overall progress."""
         with self.completed_files_lock, self.failed_files_lock:
             if success:
                 if file_url not in self.completed_files:
                     self.completed_files.add(file_url)
-                # Remove from failed_files if it was there before
-                if file_url in self.failed_files:
-                    del self.failed_files[file_url]
-                self.append_log_to_console(translate("log_debug", translate("file_completed", file_url, len(self.completed_files), self.total_files_to_download)), "INFO")
+                    if file_path:
+                        self.completed_file_paths.append(file_path)
+                    self.append_log_to_console(translate("log_debug", translate("file_completed", file_url, len(self.completed_files), self.total_files_to_download)), "INFO")
             else:
-                # Only mark as failed if not already completed
-                if file_url not in self.completed_files:
+                if file_url not in self.failed_files:
                     # Find the CreatorDownloadThread to get the error message
                     error_message = "Unknown error"
                     for thread in self.active_threads:
@@ -1884,10 +1882,7 @@ class CreatorDownloaderTab(QWidget):
                     self.failed_files[file_url] = error_message
                     self.append_log_to_console(translate("log_debug", translate("file_failed", file_url, len(self.failed_files))), "INFO")
             self.update_overall_progress()
-            # Check if all files have been attempted (successful or failed)
-            if self.total_files_to_download > 0 and len(self.completed_files) + len(self.failed_files) >= self.total_files_to_download:
-                self.append_log_to_console(translate("log_debug", translate("all_files_attempted")), "INFO")
-                self.creator_download_finished()
+            # Note: Don't trigger finish here - let cleanup_thread() handle it when thread actually completes
         if self.current_file_index == file_index:
             self.current_file_index = -1
             self.creator_file_progress.setValue(0)
@@ -2056,10 +2051,11 @@ class CreatorDownloaderTab(QWidget):
 
     def cleanup_filter_thread(self):
         """Clean up the filter thread after it finishes."""
-        if self.filter_thread in self.active_threads:
-            self.active_threads.remove(self.filter_thread)
-        self.filter_thread.deleteLater()
-        self.filter_thread = None
+        if self.filter_thread is not None:
+            if self.filter_thread in self.active_threads:
+                self.active_threads.remove(self.filter_thread)
+            self.filter_thread.deleteLater()
+            self.filter_thread = None
             
     def add_list_item(self, text, url, is_checked):
         item = QListWidgetItem()
