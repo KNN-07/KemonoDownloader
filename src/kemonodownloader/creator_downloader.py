@@ -1882,7 +1882,9 @@ class CreatorDownloaderTab(QWidget):
                     self.failed_files[file_url] = error_message
                     self.append_log_to_console(translate("log_debug", translate("file_failed", file_url, len(self.failed_files))), "INFO")
             self.update_overall_progress()
-            # Note: Don't trigger finish here - let cleanup_thread() handle it when thread actually completes
+            if self.total_files_to_download > 0 and len(self.completed_files) + len(self.failed_files) >= self.total_files_to_download:
+                self.append_log_to_console(translate("log_debug", translate("all_files_attempted")), "INFO")
+                self.creator_download_finished()
         if self.current_file_index == file_index:
             self.current_file_index = -1
             self.creator_file_progress.setValue(0)
@@ -1912,7 +1914,8 @@ class CreatorDownloaderTab(QWidget):
         self.update_overall_progress()
         if len(self.completed_posts) == self.total_posts_to_download and self.total_files_to_download == len(self.completed_files):
             self.append_log_to_console(translate("log_debug", translate("all_posts_and_files_completed")), "INFO")
-
+            # self.creator_download_finished()
+            
     def creator_download_finished(self):
         """Reset UI state after download completes or is cancelled."""
         self.downloading = False
