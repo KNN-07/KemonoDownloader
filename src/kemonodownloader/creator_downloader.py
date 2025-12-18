@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, 
                          QGroupBox, QGridLayout, QProgressBar, QTextEdit, QListWidget, 
                          QListWidgetItem, QAbstractItemView, QMessageBox, QCheckBox, 
-                         QLabel, QDialog)
+                         QLabel, QDialog, QFileDialog)
 from PyQt6.QtCore import Qt, QThread, pyqtSignal
 from PyQt6.QtGui import QColor, QPixmap
 import qtawesome as qta
@@ -1214,6 +1214,12 @@ class CreatorDownloaderTab(QWidget):
         self.creator_add_to_queue_btn.clicked.connect(self.add_creator_to_queue)
         self.creator_add_to_queue_btn.setStyleSheet("background: #4A5B7A; padding: 5px; border-radius: 5px;")
         creator_url_layout.addWidget(self.creator_add_to_queue_btn)
+        
+        self.creator_add_from_file_btn = QPushButton(qta.icon('fa5s.file-import', color='white'), "")
+        self.creator_add_from_file_btn.clicked.connect(self.add_creators_from_file)
+        self.creator_add_from_file_btn.setStyleSheet("background: #4A5B7A; padding: 5px; border-radius: 5px;")
+        self.creator_add_from_file_btn.setToolTip(translate("add_links_from_file"))
+        creator_url_layout.addWidget(self.creator_add_from_file_btn)
         left_layout.addLayout(creator_url_layout)
 
         # Creator Queue Group
@@ -1399,6 +1405,8 @@ class CreatorDownloaderTab(QWidget):
     def update_ui_text(self):
         self.creator_url_input.setPlaceholderText(translate("enter_creator_url"))
         self.creator_add_to_queue_btn.setText(translate("add_to_queue"))
+        self.creator_add_from_file_btn.setToolTip(translate("add_links_from_file"))
+        self.creator_add_from_file_btn.setText(translate("add_links_from_file_title"))
         
         self.creator_queue_group.setTitle(translate("creator_queue"))
         self.creator_options_group.setTitle(translate("download_options"))
@@ -1846,6 +1854,9 @@ class CreatorDownloaderTab(QWidget):
         self.creator_cancel_btn.setEnabled(False)
         self.total_files_to_download = 0
         self.completed_files.clear()
+        self.failed_files.clear()
+        self.completed_posts.clear()
+        self.current_file_index = -1
         self.background_task_progress.setRange(0, 100)
         self.background_task_progress.setValue(0)
         self.background_task_label.setText(translate("idle"))
@@ -2200,6 +2211,81 @@ class CreatorDownloaderTab(QWidget):
         
         if hasattr(self, 'logs_window') and self.logs_window.isVisible():
             self.logs_window.update_logs_content()
+
+    def add_creators_from_file(self):
+        """Open a text file and add all links line by line to the queue"""
+        file_path, _ = QFileDialog.getOpenFileName(
+            self, 
+            translate("select_links_file"), 
+            "", 
+            "Text Files (*.txt);;All Files (*)"
+        )
+        
+        if not file_path:
+            return
+        
+        try:
+            with open(file_path, 'r', encoding='utf-8') as file:
+                lines = file.readlines()
+            
+            added_count = 0
+            skipped_count = 0
+            
+            for line in lines:
+                url = line.strip()
+                
+                # Skip empty lines
+                if not url:
+                    continue
+                
+                # Skip if already in queue
+                if any(item[0] == url for item in self.creator_queue):
+                    self.append_log_to_console(
+                        translate("log_warning", translate("url_already_in_queue") + f": {url}"), 
+                        "WARNING"
+                    )
+                    skipped_count += 1
+                    continue
+                
+                # Validate and add to queue
+                try:
+                    # Basic URL validation
+                    domain_config = get_domain_config(url)
+                    parts = url.split('/')
+                    
+                    if len(parts) >= 5 and (domain_config['domain'] in url) and parts[-2] == 'user':
+                        self.creator_queue.append((url, False))
+                        added_count += 1
+                        self.append_log_to_console(
+                            translate("log_info", translate("added_to_queue") + f": {url}"), 
+                            "INFO"
+                        )
+                    else:
+                        self.append_log_to_console(
+                            translate("log_error", translate("invalid_url_format_from_txt")  + f": {url}"), 
+                            "ERROR"
+                        )
+                        skipped_count += 1
+                        
+                except Exception as e:
+                    self.append_log_to_console(
+                        translate("log_error", translate("error_processing_url") + f" {url}: {str(e)}"), 
+                        "ERROR"
+                    )
+                    skipped_count += 1
+            
+            self.update_creator_queue_list()
+            
+            # Show summary message
+            summary = translate("bulk_add_summary", added_count, skipped_count)
+            self.append_log_to_console(translate("log_info", summary), "INFO")
+            QMessageBox.information(self, translate("bulk_add_complete"), summary)
+            
+        except Exception as e:
+            error_msg = translate("file_read_error", str(e))
+            self.append_log_to_console(translate("log_error", error_msg), "ERROR")
+            QMessageBox.critical(self, translate("file_read_error_title"), error_msg)
+
 
 class CancellationThread(QThread):
     finished = pyqtSignal()
