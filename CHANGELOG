@@ -1,5 +1,12 @@
 # Kemono Downloader Release Notes
 
+## v5.6.0 (23 December 2025)
+**feat: Enhanced UI features, URL normalization, and import functionality**
+- Added a new button to import creator/posts URLs from a .txt file
+- Normalize URLs by stripping trailing slashes. Consistently remove trailing slashes from URLs in creator_downloader.py and post_downloader.py to prevent duplicate queue entries and ensure uniform URL handling
+- Add post list pagination and global check-all to UI. Implements pagination controls for the creator post list, allowing users to navigate posts in pages and improving performance with large post sets. Adds a new 'Check ALL (All)' checkbox to select/deselect all posts across all pages, and updates the UI and language files to support these features. Also improves post fetching, incremental UI updates, and error handling for post detection and cancellation.
+- Redesign intro screen with app image and footer. Refactored the IntroScreen layout to feature a prominent app image and version label, moved the app title, developer, and GitHub link to a smaller footer, and adjusted spacing for a cleaner appearance
+
 ## v5.5.1 (3 November 2025)
 **feat: Fix and restored download completion for creator downloader**
 - Fixed download completion to trigger finish on every posts downloaded.
