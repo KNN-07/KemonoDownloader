@@ -5,10 +5,10 @@ from packaging import version
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, 
     QHBoxLayout, QLabel, QPushButton, QGraphicsDropShadowEffect, 
-    QTabWidget, QMessageBox
+    QTabWidget, QMessageBox,
 )
 from PyQt6.QtCore import Qt, QPropertyAnimation, QEasingCurve, QThread, pyqtSignal
-from PyQt6.QtGui import QColor, QPalette, QFont, QCursor, QIcon
+from PyQt6.QtGui import QColor, QPalette, QFont, QCursor, QIcon, QPixmap
 import qtawesome as qta
 from kemonodownloader.post_downloader import PostDownloaderTab
 from kemonodownloader.creator_downloader import CreatorDownloaderTab
@@ -54,57 +54,29 @@ class IntroScreen(QWidget):
         self.setStyleSheet("background-color: #1A2A44; border: none;")
         main_layout = QVBoxLayout(self)
         main_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        main_layout.setSpacing(30)
+        main_layout.setSpacing(20)
         main_layout.setContentsMargins(40, 40, 40, 40)
 
-        # Title
-        self.title = QLabel(translate("app_title"))
-        self.title.setFont(QFont("Poppins", 42, QFont.Weight.Bold))
-        self.title.setStyleSheet("""
-            color: #FFFFFF;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 20px 40px;
-            border-radius: 12px;
-        """)
-        shadow = QGraphicsDropShadowEffect()
-        shadow.setBlurRadius(20)
-        shadow.setColor(QColor(0, 0, 0, 100))
-        shadow.setOffset(0, 5)
-        self.title.setGraphicsEffect(shadow)
-        main_layout.addWidget(self.title, alignment=Qt.AlignmentFlag.AlignCenter)
+        # Top spacer
+        main_layout.addStretch()
 
-        # Info Container
-        info_widget = QWidget()
-        info_layout = QVBoxLayout(info_widget)
-        info_layout.setSpacing(10)
-        info_widget.setStyleSheet("""
-            background: rgba(255, 255, 255, 0.08);
-            padding: 15px 25px;
-            border-radius: 10px;
-        """)
-        info_shadow = QGraphicsDropShadowEffect()
-        info_shadow.setBlurRadius(15)
-        info_shadow.setColor(QColor(0, 0, 0, 80))
-        info_widget.setGraphicsEffect(info_shadow)
+        # App Image
+        self.app_image = QLabel()
+        pixmap = QPixmap(resource_path("resources/KemonoDownloader.png"))
+        if not pixmap.isNull():
+            # Scale the image to a reasonable size, e.g., 200x200 or based on aspect ratio
+            scaled_pixmap = pixmap.scaled(300, 300, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+            self.app_image.setPixmap(scaled_pixmap)
+        self.app_image.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.app_image.setStyleSheet("background: transparent; border: none;")
+        main_layout.addWidget(self.app_image, alignment=Qt.AlignmentFlag.AlignCenter)
 
-        self.dev_label = QLabel(translate("developed_by"))
-        self.dev_label.setFont(QFont("Poppins", 16))
-        self.dev_label.setStyleSheet("color: #FFFFFF;")
-        self.dev_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        info_layout.addWidget(self.dev_label)
-
-        self.github_label = QLabel(
-            '<a href="https://github.com/VoxDroid" style="color: #A0C0FF; text-decoration: none;">github.com/VoxDroid</a>'
-        )
-        self.github_label.setFont(QFont("Poppins", 14))
-        self.github_label.setOpenExternalLinks(True)
-        self.github_label.setStyleSheet("QLabel { background: transparent; } QLabel:hover { color: #C0E0FF; }")
-        self.github_label.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
-        self.github_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        info_layout.addWidget(self.github_label)
-
-        main_layout.addWidget(info_widget)
-        main_layout.addSpacing(40)
+        # Version Label
+        self.version_label = QLabel(f"Version {CURRENT_VERSION}")
+        self.version_label.setFont(QFont("Poppins", 12))
+        self.version_label.setStyleSheet("color: #CCCCCC; background: transparent;")
+        self.version_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        main_layout.addWidget(self.version_label, alignment=Qt.AlignmentFlag.AlignCenter)
 
         # Launch Button
         self.launch_button = QPushButton(translate("launch_button"))
@@ -132,7 +104,38 @@ class IntroScreen(QWidget):
         self.launch_button.clicked.connect(self.parent.transition_to_main)
         main_layout.addWidget(self.launch_button, alignment=Qt.AlignmentFlag.AlignCenter)
 
+        # Bottom spacer
         main_layout.addStretch()
+
+        # Footer with small text
+        footer_widget = QWidget()
+        footer_layout = QVBoxLayout(footer_widget)
+        footer_layout.setSpacing(5)
+        footer_layout.setContentsMargins(0, 0, 0, 0)
+
+        self.title = QLabel(translate("app_title"))
+        self.title.setFont(QFont("Poppins", 14, QFont.Weight.Bold))
+        self.title.setStyleSheet("color: #FFFFFF; background: transparent;")
+        self.title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        footer_layout.addWidget(self.title)
+
+        self.dev_label = QLabel(translate("developed_by"))
+        self.dev_label.setFont(QFont("Poppins", 10))
+        self.dev_label.setStyleSheet("color: #CCCCCC; background: transparent;")
+        self.dev_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        footer_layout.addWidget(self.dev_label)
+
+        self.github_label = QLabel(
+            '<a href="https://github.com/VoxDroid" style="color: #A0C0FF; text-decoration: none; font-size: 10px;">github.com/VoxDroid</a>'
+        )
+        self.github_label.setFont(QFont("Poppins", 10))
+        self.github_label.setOpenExternalLinks(True)
+        self.github_label.setStyleSheet("QLabel { background: transparent; } QLabel:hover { color: #C0E0FF; }")
+        self.github_label.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self.github_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        footer_layout.addWidget(self.github_label)
+
+        main_layout.addWidget(footer_widget, alignment=Qt.AlignmentFlag.AlignCenter)
 
     def update_ui_text(self):
         self.title.setText(translate("app_title"))
