@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, 
                              QGroupBox, QGridLayout, QProgressBar, QTextEdit, QListWidget, 
                              QListWidgetItem, QAbstractItemView, QMessageBox, QCheckBox, 
-                             QLabel, QDialog, QSlider, QComboBox, QApplication)
+                             QLabel, QDialog, QSlider, QComboBox, QFileDialog, QApplication)
 from PyQt6.QtCore import Qt, QThread, pyqtSignal, QUrl, QSize, QTimer
 from PyQt6.QtGui import QColor, QPixmap, QMovie
 import qtawesome as qta
@@ -1271,6 +1271,11 @@ class PostDownloaderTab(QWidget):
         self.post_add_to_queue_btn.clicked.connect(self.add_post_to_queue)
         self.post_add_to_queue_btn.setStyleSheet("background: #4A5B7A; padding: 5px; border-radius: 5px;")
         post_url_layout.addWidget(self.post_add_to_queue_btn)
+        self.post_add_from_file_btn = QPushButton(qta.icon('fa5s.file-import', color='white'), "")
+        self.post_add_from_file_btn.clicked.connect(self.add_posts_from_file)
+        self.post_add_from_file_btn.setStyleSheet("background: #4A5B7A; padding: 5px; border-radius: 5px;")
+        self.post_add_from_file_btn.setToolTip(translate("add_links_from_file"))
+        post_url_layout.addWidget(self.post_add_from_file_btn)
         left_layout.addLayout(post_url_layout)
 
         # Post Queue Group
@@ -1432,6 +1437,8 @@ class PostDownloaderTab(QWidget):
     def update_ui_text(self):
         self.post_url_input.setPlaceholderText(translate("enter_post_url"))
         self.post_add_to_queue_btn.setText(translate("add_to_queue"))
+        self.post_add_from_file_btn.setToolTip(translate("add_links_from_file"))
+        self.post_add_from_file_btn.setText(translate("add_links_from_file_title"))
         
         self.post_queue_group.setTitle(translate("post_queue"))
         self.file_list_group.setTitle(translate("files_to_download"))
@@ -2293,3 +2300,77 @@ class PostDownloaderTab(QWidget):
         
         if hasattr(self, 'logs_window') and self.logs_window.isVisible():
             self.logs_window.update_logs()
+
+    def add_posts_from_file(self):
+        """Open a text file and add all post links line by line to the queue"""
+        file_path, _ = QFileDialog.getOpenFileName(
+            self, 
+            translate("select_links_file"), 
+            "", 
+            "Text Files (*.txt);;All Files (*)"
+        )
+        
+        if not file_path:
+            return
+        
+        try:
+            with open(file_path, 'r', encoding='utf-8') as file:
+                lines = file.readlines()
+            
+            added_count = 0
+            skipped_count = 0
+            
+            for line in lines:
+                url = line.strip()
+                
+                # Skip empty lines
+                if not url:
+                    continue
+                
+                # Skip if already in queue
+                if any(item[0] == url for item in self.post_queue):
+                    self.append_log_to_console(
+                        translate("log_warning", translate("url_already_in_queue") + f": {url}"), 
+                        "WARNING"
+                    )
+                    skipped_count += 1
+                    continue
+                
+                # Validate and add to queue
+                try:
+                    # Basic URL validation for posts
+                    domain_config = get_domain_config(url)
+                    parts = url.split('/')
+                    
+                    if len(parts) >= 7 and (domain_config['domain'] in url) and parts[-4] == 'user' and parts[-2] == 'post':
+                        self.post_queue.append((url, False))
+                        added_count += 1
+                        self.append_log_to_console(
+                            translate("log_info", translate("added_to_queue") + f": {url}"), 
+                            "INFO"
+                        )
+                    else:
+                        self.append_log_to_console(
+                            translate("log_error", translate("invalid_url_format_from_txt")  + f": {url}"), 
+                            "ERROR"
+                        )
+                        skipped_count += 1
+                        
+                except Exception as e:
+                    self.append_log_to_console(
+                        translate("log_error", translate("error_processing_url") + f" {url}: {str(e)}"), 
+                        "ERROR"
+                    )
+                    skipped_count += 1
+            
+            self.update_post_queue_list()
+            
+            # Show summary message
+            summary = translate("bulk_add_summary", added_count, skipped_count)
+            self.append_log_to_console(translate("log_info", summary), "INFO")
+            QMessageBox.information(self, translate("bulk_add_complete"), summary)
+            
+        except Exception as e:
+            error_msg = translate("file_read_error", str(e))
+            self.append_log_to_console(translate("log_error", error_msg), "ERROR")
+            QMessageBox.critical(self, translate("file_read_error_title"), error_msg)
