@@ -3,25 +3,25 @@ const translations = {
     en: {
       // Header
       appTitle: "Kemono Downloader",
-      appDescription: "A cross-platform Python app built with PyQt6 to download content from Kemono.cr",
+      appDescription: "A cross-platform Python app built with PyQt6 to download content from Kemono.cr and Coomer.st",
       githubRepo: "GitHub Repository",
   
       // Overview
       overviewTitle: "Overview",
       overviewDescription:
-        'Kemono Downloader is a versatile Python-based desktop application built with PyQt6, designed to download content from <a href="https://kemono.cr" target="_blank">Kemono.cr</a>. This tool enables users to archive individual posts or entire creator profiles from services like Patreon, Fanbox, and more, supporting a wide range of file types with customizable settings and advanced features.',
+        'Kemono Downloader is a versatile Python-based desktop application built with PyQt6, designed to download content from <a href="https://kemono.cr" target="_blank">Kemono.cr</a> and <a href="https://coomer.st" target="_blank">Coomer.st</a>. This tool enables users to archive individual posts or entire creator profiles from services like Patreon, Fanbox, and more, supporting a wide range of file types with customizable settings and advanced features.',
   
       // Important Notices
       importantNoticesTitle: "Important Notices",
       disclaimerTitle: "Disclaimer",
       disclaimerText1:
-        "KemonoDownloader is a tool designed for personal and educational use only, to assist users in downloading content from Kemono.cr. The maintainers of this project <strong>do not condone or support the unauthorized distribution of copyrighted material</strong>. Users are solely responsible for ensuring they have the legal right to access and download content from Kemono.cr, and for complying with all applicable laws, as well as the terms of service of the original platforms from which the content originates (e.g., Patreon, Pixiv Fanbox, Gumroad).",
+        "KemonoDownloader is a tool designed for personal and educational use only, to assist users in downloading content from Kemono.cr and Coomer.st. The maintainers of this project <strong>do not condone or support the unauthorized distribution of copyrighted material</strong>. Users are solely responsible for ensuring they have the legal right to access and download content from Kemono.cr and Coomer.st, and for complying with all applicable laws, as well as the terms of service of the original platforms from which the content originates (e.g., Patreon, Pixiv Fanbox, Gumroad).",
       disclaimerText2:
         "<strong>Misuse of this tool to infringe on creators' rights, violate copyright laws, or breach terms of service is strictly prohibited.</strong> The maintainers are not liable for any misuse of KemonoDownloader or any consequences arising from its use, including but not limited to legal action, financial loss, or damage to third parties.",
   
       ethicalUseTitle: "Ethical Use Guidelines",
       ethicalUseText1:
-        "KemonoDownloader interacts with content from Kemono.cr, which may include material originally posted on paywalled platforms like Patreon, Pixiv Fanbox, and Gumroad. Many creators on these platforms rely on paid subscriptions for their livelihood. Downloading and redistributing their content without permission can harm their ability to continue creating.",
+        "KemonoDownloader interacts with content from Kemono.cr and Coomer.st, which may include material originally posted on paywalled platforms like Patreon, Pixiv Fanbox, and Gumroad. Many creators on these platforms rely on paid subscriptions for their livelihood. Downloading and redistributing their content without permission can harm their ability to continue creating.",
       ethicalUseText2: "We strongly encourage users to:",
       ethicalUseList1: "Use KemonoDownloader responsibly and only for content you have the legal right to access.",
       ethicalUseList2:
@@ -32,9 +32,9 @@ const translations = {
       risksLegalTitle: "Legal Risks",
       risksLegalText:
         "Downloading content from Kemono.cr may violate copyright laws or the terms of service of the original platforms. Users assume all legal risks associated with using this tool.",
-      risksDependencyTitle: "Dependency on Kemono.cr",
+      risksDependencyTitle: "Dependency on Kemono.cr and Coomer.st",
       risksDependencyText:
-        "KemonoDownloader relies on Kemono.cr, which has a history of inconsistent updates and downtime. If Kemono.cr becomes unavailable, this tool will lose its functionality.",
+        "KemonoDownloader relies on Kemono.cr and Coomer.st, which have a history of inconsistent updates and downtime. If these sites become unavailable, this tool will lose its functionality.",
       risksRateLimitsTitle: "Rate Limits and Errors",
       risksRateLimitsText:
         "Kemono.cr may impose rate limits or other restrictions that affect download performance. The maintainers cannot guarantee uninterrupted access to Kemono.cr's content.",
@@ -92,7 +92,7 @@ const translations = {
       installStep5: "Build the application:",
       installStep6: "Run the application:",
       installNote: "Note",
-      installNoteText: "An internet connection is required to fetch content from Kemono.cr.",
+      installNoteText: "An internet connection is required to fetch content from Kemono.cr and Coomer.st.",
   
       // Pre-compiled binaries
       installWindows:
@@ -143,16 +143,16 @@ const translations = {
       // Usage steps
       usageStep1:
         "The application creates default directories (`Downloads`, `Cache`, `Other Files`) in the specified save location.",
-      usageStep2: "Ensure an active internet connection to access Kemono.cr content.",
+      usageStep2: "Ensure an active internet connection to access Kemono.cr and Coomer.st content.",
       usageStep3: "Explore the Help tab for detailed instructions and troubleshooting tips.",
       postDownloaderStep1:
-        'Enter a post URL (e.g., `https://kemono.cr/patreon/user/123456789/post/123456789`) in the "Enter post URL" field.',
+        'Enter a post URL (e.g., `https://kemono.cr/patreon/user/123456789/post/123456789` or `https://coomer.st/onlyfans/user/123456789/post/123456789`) in the "Enter post URL" field.',
       postDownloaderStep2: 'Click "Add to Queue" to add it to the list.',
       postDownloaderStep3:
         "Click the eye icon to view files, filter by type (e.g., JPG, ZIP), and select files to download.",
       postDownloaderStep4: 'Click "Download" to start, and monitor progress with the progress bars and console.',
       creatorDownloaderStep1:
-        'Enter a creator URL (e.g., `https://kemono.cr/patreon/user/123456789`) in the "Enter creator URL" field.',
+        'Enter a creator URL (e.g., `https://kemono.cr/patreon/user/123456789` or `https://coomer.st/onlyfans/user/123456789`) in the "Enter creator URL" field.',
       creatorDownloaderStep2: 'Click "Add to Queue" to add it to the list.',
       creatorDownloaderStep3:
         "Click the eye icon to fetch posts, configure options (Main File, Attachments, Content Images), and select posts.",
