@@ -1086,7 +1086,7 @@ class SettingsTab(QWidget):
 
     def update_tor_button_states(self):
         tor_path = self.temp_settings["tor_path"]
-        tor_exists = tor_path and os.path.exists(tor_path)
+        tor_exists = bool(tor_path and os.path.exists(tor_path))
         
         self.test_tor_button.setEnabled(tor_exists)
         self.download_tor_button.setVisible(not tor_exists)  # Hide download button if Tor is already available
