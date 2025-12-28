@@ -40,6 +40,7 @@ class SettingsTab(QWidget):
         # Tor process management
         self.tor_process = None
         self.tor_data_dir = None
+        self.tor_config_file = None
         
         language_manager.set_language(self.settings["language"])
         
@@ -926,6 +927,17 @@ class SettingsTab(QWidget):
             import tempfile
             self.tor_data_dir = tempfile.mkdtemp(prefix="kemonodownloader_tor_")
         
+        # Create a temporary torrc file to avoid using system config
+        import tempfile
+        self.tor_config_file = tempfile.NamedTemporaryFile(mode='w', suffix='.torrc', delete=False)
+        self.tor_config_file.write("""SocksPort 9050
+DataDirectory {data_dir}
+Log notice stdout
+ExitPolicy reject *:*
+GeoIPExcludeUnknown 1
+""".format(data_dir=self.tor_data_dir))
+        self.tor_config_file.close()
+        
         # Clear previous output
         self.tor_output_text.clear()
         
@@ -933,11 +945,7 @@ class SettingsTab(QWidget):
         self.tor_process = QProcess(self)
         self.tor_process.setProgram(tor_path)
         self.tor_process.setArguments([
-            "--SocksPort", "9050",
-            "--DataDirectory", self.tor_data_dir,
-            "--Log", "notice stdout",
-            "--ExitPolicy", "reject *:*",  # Disable exit relay
-            "--GeoIPExcludeUnknown", "1"
+            "--torrc-file", self.tor_config_file.name
         ])
         
         self.tor_process.readyReadStandardOutput.connect(self.handle_tor_output)
@@ -1136,6 +1144,13 @@ class SettingsTab(QWidget):
                 self.tor_data_dir = None
             except Exception as e:
                 print(f"Failed to clean up Tor data directory: {e}")
+        
+        # Clean up temporary config file
+        if hasattr(self, 'tor_config_file') and os.path.exists(self.tor_config_file.name):
+            try:
+                os.unlink(self.tor_config_file.name)
+            except Exception as e:
+                print(f"Failed to clean up Tor config file: {e}")
         
         self.start_tor_button.setEnabled(True)
         self.stop_tor_button.setEnabled(False)
