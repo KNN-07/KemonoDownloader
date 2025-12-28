@@ -29,7 +29,10 @@ class KDLanguage:
                 "korean": ".txt 파일에서 크리에이터 URL을 포함하는 파일을 선택하세요",
                 "chinese-simplified": "选择包含创作者URL的.txt文件"
             },
+            "select_tor_executable": {
                 "english": "Select Tor executable",
+                "japanese": "Tor実行ファイルを選択",
+                "korean": "Tor 실행 파일 선택",
                 "chinese-simplified": "选择Tor可执行文件"
             },
             
