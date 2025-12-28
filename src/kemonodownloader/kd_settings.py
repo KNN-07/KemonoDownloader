@@ -276,6 +276,7 @@ class SettingsTab(QWidget):
         
         self.custom_proxy_input = QLineEdit(self.temp_settings["custom_proxy_url"])
         self.custom_proxy_input.setStyleSheet("padding: 5px; border-radius: 5px;")
+        self.custom_proxy_input.setPlaceholderText("e.g., 111.222.333.444:8080")
         self.custom_proxy_input.textChanged.connect(lambda: self.update_temp_setting("custom_proxy_url", self.custom_proxy_input.text()))
         self.custom_proxy_layout.addWidget(self.custom_proxy_input)
         
