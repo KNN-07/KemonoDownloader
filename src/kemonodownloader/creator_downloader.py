@@ -1329,6 +1329,7 @@ class CreatorDownloaderTab(QWidget):
             '.7z': QCheckBox("7Z"),
             '.mp3': QCheckBox("MP3"),
             '.wav': QCheckBox("WAV"),
+            '.flac': QCheckBox("FLAC"),
             '.rar': QCheckBox("RAR"),
             '.mov': QCheckBox("MOV"),
             '.docx': QCheckBox("DOCX"),

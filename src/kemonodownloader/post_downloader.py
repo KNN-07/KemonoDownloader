@@ -263,7 +263,7 @@ class MediaPreviewModal(QDialog):
             self.preview_thread.progress.connect(self.update_progress)
             self.preview_thread.error.connect(self.display_error)
             self.preview_thread.start()
-        elif ext in ['.mp4', '.mov', '.mp3', '.wav']:
+        elif ext in ['.mp4', '.mov', '.mp3', '.wav', '.flac']:
             self.setup_media_player()
             self.preview_thread = PreviewThread(self.media_url, self.cache_dir, self.tab_parent.parent.settings_tab)
             self.preview_thread.preview_ready.connect(self.play_media)
@@ -620,7 +620,7 @@ class PostDetectionThread(QThread):
     def detect_files(self, post):
         detected_files = []
         allowed_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.zip', '.mp4', '.pdf', '.7z', 
-                              '.mp3', '.wav', '.rar', '.mov', '.docx', '.psd', '.clip', '.jpe', '.webp']
+                              '.mp3', '.wav', '.flac', '.rar', '.mov', '.docx', '.psd', '.clip', '.jpe', '.webp']
 
         def get_effective_extension(file_path, file_name):
             name_ext = os.path.splitext(file_name)[1].lower()
@@ -1383,7 +1383,7 @@ class PostDownloaderTab(QWidget):
             '.jpg': QCheckBox("JPG"), '.jpeg': QCheckBox("JPEG"), '.png': QCheckBox("PNG"),
             '.zip': QCheckBox("ZIP"), '.mp4': QCheckBox("MP4"), '.gif': QCheckBox("GIF"),
             '.pdf': QCheckBox("PDF"), '.7z': QCheckBox("7Z"),
-            '.mp3': QCheckBox("MP3"), '.wav': QCheckBox("WAV"), '.rar': QCheckBox("RAR"),
+            '.mp3': QCheckBox("MP3"), '.wav': QCheckBox("WAV"), '.flac': QCheckBox("FLAC"), '.rar': QCheckBox("RAR"),
             '.mov': QCheckBox("MOV"), '.docx': QCheckBox("DOCX"), '.psd': QCheckBox("PSD"), 
             '.clip': QCheckBox("CLIP"), '.jpe':QCheckBox("JPE"), '.webp':QCheckBox("WEBP")
         }
@@ -2262,7 +2262,7 @@ class PostDownloaderTab(QWidget):
         if self.current_preview_url:
             ext = os.path.splitext(self.current_preview_url.lower())[1]
             unsupported_extensions = ['.zip', '.psd', '.docx', '.7z', '.rar', '.clip','jpe']
-            supported_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.mp4', '.mov', '.mp3', '.wav', '.webp']
+            supported_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.mp4', '.mov', '.mp3', '.wav', '.flac', '.webp']
 
             if ext in unsupported_extensions:
                 self.append_log_to_console(translate("log_warning", translate("preview_not_supported", ext, self.current_preview_url)), "WARNING")
