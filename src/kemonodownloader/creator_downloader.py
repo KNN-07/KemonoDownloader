@@ -3,7 +3,7 @@ import re
 import hashlib
 import requests
 import json
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse, parse_qs
 from bs4 import BeautifulSoup
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, 
                          QGroupBox, QGridLayout, QProgressBar, QTextEdit, QListWidget, 
@@ -230,32 +230,80 @@ class PostDetectionThread(QThread):
     def run(self):
         if not self.is_running:
             return
-        self.url = self.url.rstrip('/')
-        self.log.emit(translate("log_info", translate("checking_creator_with_url", self.url)), "INFO")
-        parts = self.url.split('/')
-        if len(parts) < 5 or (self.domain_config['domain'] not in self.url) or parts[-2] != 'user':
-            self.error.emit(translate("invalid_url_format"))
-            return
-        service, creator_id = parts[-3], parts[-1]
 
+        # Parse URL to handle query parameters correctly and extract clean ID and service
+        parsed_url = urlparse(self.url)
+        path = parsed_url.path.strip('/')
+        path_parts = path.split('/')
+
+        # Check validity.
+        # path_parts should end with user/{id}
+        # Example: fanbox/user/12345 -> parts: ['fanbox', 'user', '12345']
+        if len(path_parts) < 3 or (self.domain_config['domain'] not in self.url and 'coomer' not in self.url) or path_parts[-2] != 'user':
+             # Fallback to original split if basic check fails, though likely invalid
+             parts = self.url.split('/')
+             if len(parts) < 5 or (self.domain_config['domain'] not in self.url) or parts[-2] != 'user':
+                self.error.emit(translate("invalid_url_format"))
+                return
+             else:
+                 # If fallback worked (e.g. some weird URL structure I didn't anticipate)
+                 service, creator_id = parts[-3], parts[-1]
+                 # Clean creator_id from potential query params if using split
+                 if '?' in creator_id:
+                     creator_id = creator_id.split('?')[0]
+        else:
+             service = path_parts[-3]
+             creator_id = path_parts[-1]
+
+        self.log.emit(translate("log_info", translate("checking_creator_with_url", self.url)), "INFO")
         self.log.emit(translate("log_debug", translate("parsed_url_service_creator", service, creator_id)), "INFO")
 
         base_api_url = f"{self.domain_config['api_base']}/{service}/user/{creator_id}"
         self.log.emit(translate("log_debug", translate("base_api_url", base_api_url)), "INFO")
 
+        # Parse query parameters
+        query_params = parse_qs(parsed_url.query)
+        search_query = query_params.get('q', [None])[0]
+        offset_param = query_params.get('o', [None])[0]
+        
+        start_offset = 0
+        single_page_target = False
+        
+        if offset_param:
+            try:
+                start_offset = int(offset_param)
+                single_page_target = True
+                self.log.emit(translate("log_info", f"Validation started with specific offset: {start_offset}"), "INFO")
+            except ValueError:
+                self.log.emit(translate("log_warning", f"Invalid offset parameter: {offset_param}"), "WARNING")
+
+        if search_query:
+            self.log.emit(translate("log_info", f"Search query detected: {search_query}"), "INFO")
+
         all_posts = []
-        offset = 0
+        offset = start_offset
         page_size = 50
         max_attempts = self.settings.creator_posts_max_attempts
 
         attempt = 1
         while attempt <= max_attempts and self.is_running:
+            # Construct query string suffix
+            query_suffix = f"?o={offset}"
+            if search_query:
+                query_suffix += f"&q={search_query}"
+
             alternative_urls = [
-                f"{self.domain_config['api_base']}/{service}/user/{creator_id}/posts?o={offset}",  # Try with /posts suffix
-                f"{base_api_url}?o={offset}",  # Original format as fallback
-                f"{self.domain_config['base_url']}/api/{service}/user/{creator_id}?o={offset}",  # Try without v1
-                f"{base_api_url}?offset={offset}&limit={page_size}",  # Try different parameter names
+                f"{self.domain_config['api_base']}/{service}/user/{creator_id}/posts{query_suffix}",  # Try with /posts suffix
+                f"{base_api_url}{query_suffix}",  # Original format as fallback
+                f"{self.domain_config['base_url']}/api/{service}/user/{creator_id}{query_suffix}",  # Try without v1
             ]
+            
+            # Add variant with explicit offset/limit/q if needed, though usually standard params work
+            # For 4th option in original code:
+            alt_suffix_4 = f"?offset={offset}&limit={page_size}"
+            if search_query:
+                alt_suffix_4 += f"&q={search_query}"
+            alternative_urls.append(f"{base_api_url}{alt_suffix_4}")
             
             success = False
             response = None
@@ -401,6 +449,11 @@ class PostDetectionThread(QThread):
             if batch_posts:
                 self.posts_batch.emit(batch_posts)
 
+            # If user requested a single page (via offset parameter), stop after the first successful batch
+            if single_page_target:
+                self.log.emit(translate("log_info", f"Single page request satisfied, stopping."), "INFO")
+                break
+            
             if len(posts_data) < page_size:
                 self.log.emit(translate("log_info", translate("last_page_reached_with_counts", len(posts_data), page_size, len(all_posts))), "INFO")
                 break
@@ -563,7 +616,17 @@ class FilePreparationThread(QThread):
     def fetch_and_detect_files(self, post_id, creator_url):
         creator_url = creator_url.rstrip('/')
         parts = creator_url.split('/')
-        service, creator_id = parts[-3], parts[-1]
+        if len(parts) >= 3:
+             service = parts[-3]
+             creator_id = parts[-1]
+             # Clean service and creator_id from potential query params
+             if '?' in service:
+                 service = service.split('?')[0]
+             if '?' in creator_id:
+                 creator_id = creator_id.split('?')[0]
+        else:
+             service = "unknown_service"
+             creator_id = "unknown_creator"
         domain_config = get_domain_config(creator_url)
         api_url = f"{domain_config['api_base']}/{service}/user/{creator_id}/post/{post_id}"
         max_retries = self.settings.post_data_max_retries
@@ -2035,7 +2098,18 @@ class CreatorDownloaderTab(QWidget):
         url = url.rstrip('/')
         remaining_urls = urls[1:]
         parts = url.split('/')
-        service, creator_id = parts[-3], parts[-1]
+        if len(parts) >= 3:
+             service = parts[-3]
+             creator_id = parts[-1]
+             # Clean service and creator_id from potential query params
+             if '?' in service:
+                 service = service.split('?')[0]
+             if '?' in creator_id:
+                 creator_id = creator_id.split('?')[0]
+        else:
+             # Fallback if URL structure is unexpected
+             service = "unknown_service"
+             creator_id = "unknown_creator"
 
         self.creator_overall_progress_label.setText(
             translate("overall_progress", 0, self.total_files_to_download, 0, self.total_posts_to_download)
