@@ -50,6 +50,13 @@ class KDLanguage:
                 "chinese-simplified": "已添加到队列"
             },
             
+            "error": {
+                "english": "Error",
+                "japanese": "エラー",
+                "korean": "오류",
+                "chinese-simplified": "错误"
+            },
+            
             "invalid_url_format_from_txt": {
                 "english": "Invalid URL format, skipping",
                 "japanese": "無効なURL形式、スキップします",
@@ -3453,6 +3460,15 @@ class KDLanguage:
             str: Current language
         """
         return self.current_language
+    
+    def get_language(self):
+        """
+        Get the current language (alias for get_current_language).
+        
+        Returns:
+            str: Current language
+        """
+        return self.get_current_language()
     
     def get_language_name(self, language=None):
         """
