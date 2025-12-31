@@ -1,5 +1,13 @@
 # Kemono Downloader Release Notes
 
+## v5.8.0 (07 January 2025)
+**feat: Enhanced download capabilities, Tor compatibility, and UI improvements**
+- Fix Tor startup issues on Linux and cross-platform compatibility. Create temporary torrc file to avoid system config conflicts on Linux. Use --torc-file argument for clean Tor initialization.
+- Add FLAC file support to downloader and preview. This commit adds support for the FLAC audio file format across the creator and post downloader modules. FLAC files can now be detected, previewed, and filtered using the UI checkboxes.
+- Add option to download post text as desc.txt. Introduces a checkbox in both creator and post downloaders to enable downloading post text content as desc.txt. Implements logic to fetch, parse, and save post descriptions, with translations and logging for success or failure. Updates language file with new translation keys.
+- Enable multi-selection and bulk actions in post/file lists. Updated both CreatorDownloaderTab and PostDownloaderTab to support extended selection in their respective QListWidgets. Checkbox toggling and item highlighting now apply to all selected items, allowing for bulk operations. Refactored selection handling and removed single-item click handlers in favor of selection change events.
+- Improve URL parsing and query handling for creator downloads. Enhanced URL parsing logic to robustly extract service and creator IDs, including handling of query parameters such as offset and search queries. Added support for single-page requests and improved error handling for malformed URLs. Updated related methods to consistently clean extracted values and handle unexpected URL structures.
+
 ## v5.7.0 (28 December 2025)
 **feat: Add proxy and Tor support to settings and downloads, and localize log messages in post_downloader.py**
 - Introduces proxy configuration (custom and Tor) in the settings UI, including Tor process management, auto-detection, and testing. Updates language strings for proxy/Tor options and confirmation dialogs. Refactors download logic to use requests with proxy support, and ensures proxy settings are respected throughout the downloader. Adds PySocks to requirements for SOCKS proxy support.
