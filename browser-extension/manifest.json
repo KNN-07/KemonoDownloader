@@ -1,8 +1,11 @@
 {
   "manifest_version": 3,
   "name": "Kemono Downloader Extension",
-  "version": "1.0",
+  "short_name": "KemonoDLE",
+  "version": "1.1.0",
   "description": "Download posts from Kemono and Coomer sites",
+  "author": "VoxDroid",
+  "homepage_url": "https://github.com/VoxDroid/KemonoDownloader",
   "permissions": [
     "activeTab",
     "downloads",

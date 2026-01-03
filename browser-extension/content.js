@@ -24,6 +24,23 @@
   let service, creator_id, post_id, domain, api_base;
   let currentButton = null;
 
+  // Utility function to truncate long filenames for display
+  function truncateFilename(filename, maxLength = 30) {
+    if (filename.length <= maxLength) {
+      return filename;
+    }
+    
+    const extension = filename.split('.').pop();
+    const nameWithoutExt = filename.substring(0, filename.lastIndexOf('.'));
+    
+    if (nameWithoutExt.length <= maxLength - 3 - extension.length - 1) {
+      return filename;
+    }
+    
+    const truncatedName = nameWithoutExt.substring(0, maxLength - 3 - extension.length - 1);
+    return truncatedName + '...' + extension;
+  }
+
   // Parse URL for post pages
   if (isPostPage) {
     const parts = url.split('/').filter(p => p);
@@ -309,7 +326,8 @@
 
         const label = document.createElement('label');
         label.htmlFor = `file_${index}`;
-        label.textContent = file.filename;
+        label.textContent = truncateFilename(file.filename);
+        label.title = file.filename; // Show full filename on hover
         label.style.cursor = 'pointer';
         label.style.flexGrow = '1';
         label.style.fontSize = '14px';
@@ -544,12 +562,7 @@
     try {
       const zip = new JSZip();
 
-      // Add text content if requested
-      if (downloadText && postData.content) {
-        updateProgress({ status: 'preparing', message: 'Adding text content...', progress: 10 });
-        const textFilename = autoRename ? `${postData.id}_content.txt` : 'content.txt';
-        zip.file(textFilename, postData.content);
-      }
+
 
       // Add files to ZIP
       let processedFiles = 0;
@@ -629,7 +642,9 @@
             chrome.runtime.sendMessage({
               action: 'fetch_file',
               url: file.url,
-              filename: file.filename
+              filename: file.filename,
+              fileIndex: processedFiles + 1,
+              totalFiles: totalFiles
             }, (response) => {
               if (chrome.runtime.lastError) {
                 reject(new Error(chrome.runtime.lastError.message));
@@ -845,7 +860,7 @@
         compressionOptions: { level: 6 }
       });
 
-      // Create download URL and download
+      // Create download URL for the ZIP
       const zipUrl = URL.createObjectURL(zipBlob);
       const zipFileName = `${sanitizeFilename(postData.title || 'post')}.zip`;
       console.log('ZIP created, downloading as:', zipFileName);
@@ -856,54 +871,69 @@
         progress: 95
       });
 
-      chrome.runtime.sendMessage({
-        action: 'download',
-        url: zipUrl,
-        filename: zipFileName
-      }, async (response) => {
-        if (chrome.runtime.lastError) {
-          console.error('Download failed:', chrome.runtime.lastError);
+      // Try direct download in the page context (works in incognito where background may not access page blob URLs)
+      try {
+        const a = document.createElement('a');
+        a.href = zipUrl;
+        a.download = zipFileName;
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        console.log('Triggered direct ZIP download via anchor click');
+      } catch (err) {
+        console.error('Direct download failed, falling back to background download:', err);
+        // Fallback to background download (may still fail for incognito blob URLs)
+        chrome.runtime.sendMessage({
+          action: 'download',
+          url: zipUrl,
+          filename: zipFileName
+        }, (response) => {
+          if (chrome.runtime.lastError) {
+            console.error('Fallback download failed:', chrome.runtime.lastError);
+            updateProgress({
+              status: 'error',
+              message: 'ZIP download failed: ' + chrome.runtime.lastError.message
+            });
+          }
+        });
+      }
+
+      // Wait for all video downloads to complete as before
+      if (videoDownloadPromises.length > 0) {
+        console.log(`Waiting for ${videoDownloadPromises.length} video downloads to complete...`);
+        updateProgress({
+          status: 'processing',
+          message: 'ZIP created, waiting for video downloads to complete...',
+          progress: 90
+        });
+
+        try {
+          await Promise.all(videoDownloadPromises);
+          console.log('All video downloads completed');
+          if (window.videoStatusElement) {
+            window.videoStatusElement.textContent = `All ${videoDownloads.length} video(s) downloaded successfully`;
+            window.videoStatusElement.style.color = '#059669';
+          }
+        } catch (videoError) {
+          console.error('Some video downloads failed:', videoError);
           updateProgress({
             status: 'error',
-            message: 'ZIP download failed: ' + chrome.runtime.lastError.message
+            message: 'Some video downloads failed: ' + videoError.message
           });
-        } else {
-          // Wait for all video downloads to complete
-          if (videoDownloadPromises.length > 0) {
-            console.log(`Waiting for ${videoDownloadPromises.length} video downloads to complete...`);
-            updateProgress({
-              status: 'processing',
-              message: 'ZIP created, waiting for video downloads to complete...',
-              progress: 90
-            });
-
-            try {
-              await Promise.all(videoDownloadPromises);
-              console.log('All video downloads completed');
-              if (window.videoStatusElement) {
-                window.videoStatusElement.textContent = `All ${videoDownloads.length} video(s) downloaded successfully`;
-                window.videoStatusElement.style.color = '#059669';
-              }
-            } catch (videoError) {
-              console.error('Some video downloads failed:', videoError);
-              updateProgress({
-                status: 'error',
-                message: 'Some video downloads failed: ' + videoError.message
-              });
-              return;
-            }
-          }
-
-          updateProgress({
-            status: 'completed',
-            message: `Download completed! ${processedFiles}/${totalFiles} files (${formatBytes(totalBytesDownloaded)}) saved${videoDownloads.length > 0 ? ` + ${videoDownloads.length} video(s) individually` : ''}`,
-            downloadId: response?.downloadId,
-            progress: 100
-          });
+          return;
         }
-        // Clean up the blob URL
-        setTimeout(() => URL.revokeObjectURL(zipUrl), 10000);
+      }
+
+      // Finalize progress (no downloadId available for direct anchor downloads)
+      updateProgress({
+        status: 'completed',
+        message: `Download completed! ${processedFiles}/${totalFiles} files (${formatBytes(totalBytesDownloaded)}) saved${videoDownloads.length > 0 ? ` + ${videoDownloads.length} video(s) individually` : ''}`,
+        progress: 100
       });
+
+      // Clean up the blob URL
+      setTimeout(() => URL.revokeObjectURL(zipUrl), 10000);
 
       return true;
     } catch (error) {
@@ -931,11 +961,26 @@
       const textFileName = autoRename ? `${sanitizeFilename(postData.title || 'post')}_content.txt` : 'content.txt';
       const textBlob = new Blob([postData.content], { type: 'text/plain' });
       const textUrl = URL.createObjectURL(textBlob);
-      chrome.runtime.sendMessage({
-        action: 'download',
-        url: textUrl,
-        filename: textFileName
-      });
+
+      // Trigger direct download from page context (works in incognito)
+      try {
+        const a = document.createElement('a');
+        a.href = textUrl;
+        a.download = textFileName;
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      } catch (err) {
+        console.error('Direct text download failed, falling back to background download:', err);
+        chrome.runtime.sendMessage({
+          action: 'download',
+          url: textUrl,
+          filename: textFileName
+        });
+      }
+
+      setTimeout(() => URL.revokeObjectURL(textUrl), 10000);
     }
   }
 

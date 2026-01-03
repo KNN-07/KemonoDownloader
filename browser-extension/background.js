@@ -30,11 +30,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       try {
         console.log('Background: Fetching file:', request.url);
 
-        // Send initial progress update
+        const fileLabel = (request.fileIndex && request.totalFiles) ? `${request.fileIndex}/${request.totalFiles}: ${request.filename || 'file'}` : (request.filename || 'file');
+
+        // Send initial progress update with index/total when available
         chrome.tabs.sendMessage(sender.tab.id, {
           action: 'zip_progress',
           status: 'downloading',
-          message: `Fetching: ${request.filename || 'file'}`,
+          message: `Fetching: ${fileLabel}`,
           progress: 0
         });
 
@@ -60,7 +62,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         chrome.tabs.sendMessage(sender.tab.id, {
           action: 'zip_progress',
           status: 'downloading',
-          message: `Processing: ${request.filename || 'file'}`,
+          message: `Processing: ${fileLabel}`,
           progress: 25
         });
 
@@ -71,7 +73,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         chrome.tabs.sendMessage(sender.tab.id, {
           action: 'zip_progress',
           status: 'downloading',
-          message: `Processing: ${request.filename || 'file'} (${formatBytes(blob.size)})`,
+          message: `Processing: ${fileLabel} (${formatBytes(blob.size)})`,
           progress: 50,
           fileSize: blob.size
         });
@@ -105,7 +107,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         chrome.tabs.sendMessage(sender.tab.id, {
           action: 'zip_progress',
           status: 'downloading',
-          message: `Converting: ${request.filename || 'file'}`,
+          message: `Converting: ${fileLabel}`,
           progress: 75
         });
 
@@ -197,7 +199,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         chrome.tabs.sendMessage(sender.tab.id, {
           action: 'zip_progress',
           status: 'downloading',
-          message: `Ready: ${request.filename || 'file'}`,
+          message: `Ready: ${fileLabel}`,
           progress: 100
         });
 
