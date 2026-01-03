@@ -1091,6 +1091,12 @@ class KDLanguage:
                 "korean": "도움말",
                 "chinese-simplified": "帮助"
             },
+            "extension_tab": {
+                "english": "Browser Extension",
+                "japanese": "ブラウザ拡張機能",
+                "korean": "브라우저 확장",
+                "chinese-simplified": "浏览器扩展"
+            },
             
             # Common buttons and actions
             "add_to_queue": {
@@ -3141,6 +3147,220 @@ class KDLanguage:
                            "<b>7.3 注意事项</b><br>"
                            "- 支持由开发者和社区以志愿者形式提供。<br>"
                            "- 对于非紧急问题，等待回复时请保持耐心。"
+            },
+
+            # Extension tab translations
+            "extension_title": {
+                "english": "Browser Extension Features",
+                "japanese": "ブラウザ拡張機能の機能",
+                "korean": "브라우저 확장 기능",
+                "chinese-simplified": "浏览器扩展功能"
+            },
+            "extension_intro": {
+                "english": "A standalone browser extension for downloading content from Kemono and Coomer sites. This extension provides an alternative to the desktop application, allowing you to download posts directly from your browser.<br><br>"
+                           "<b>Core Features:</b><br>"
+                           "- Download individual posts or multiple files from Kemono/Coomer pages<br>"
+                           "- Selective file downloads with checkbox selection<br>"
+                           "- ZIP compression for multiple files with progress tracking<br>"
+                           "- Individual downloads for large video files<br>"
+                           "- Automatic file organization and naming<br>"
+                           "- Compatible with both kemono.cr and coomer.st<br><br>"
+                           "The extension works independently from the desktop application and uses your browser's download manager.",
+                "japanese": "KemonoおよびCoomerサイトからコンテンツをダウンロードするためのスタンドアロンブラウザ拡張機能。この拡張機能はデスクトップアプリケーションの代替手段を提供し、ブラウザから直接投稿をダウンロードできます。<br><br>"
+                           "<b>コア機能:</b><br>"
+                           "- Kemono/Coomerページから個別の投稿または複数のファイルをダウンロード<br>"
+                           "- チェックボックス選択による選択的なファイルダウンロード<br>"
+                           "- 進捗追跡付きの複数ファイルのZIP圧縮<br>"
+                           "- 大容量動画ファイルの個別ダウンロード<br>"
+                           "- 自動ファイル整理と命名<br>"
+                           "- kemono.crとcoomer.stの両方に対応<br><br>"
+                           "拡張機能はデスクトップアプリケーションから独立して動作し、ブラウザのダウンロードマネージャーを使用します。",
+                "korean": "Kemono 및 Coomer 사이트에서 콘텐츠를 다운로드하기 위한 독립형 브라우저 확장 프로그램입니다. 이 확장 프로그램은 데스크톱 응용 프로그램의 대안을 제공하여 브라우저에서 직접 게시물을 다운로드할 수 있습니다.<br><br>"
+                          "<b>핵심 기능:</b><br>"
+                          "- Kemono/Coomer 페이지에서 개별 게시물 또는 여러 파일 다운로드<br>"
+                          "- 체크박스 선택을 통한 선택적 파일 다운로드<br>"
+                          "- 진행률 추적과 함께 여러 파일 ZIP 압축<br>"
+                          "- 대용량 비디오 파일 개별 다운로드<br>"
+                          "- 자동 파일 구성 및 이름 지정<br>"
+                          "- kemono.cr 및 coomer.st 모두와 호환<br><br>"
+                          "확장 프로그램은 데스크톱 응용 프로그램과 독립적으로 작동하며 브라우저의 다운로드 관리자를 사용합니다.",
+                "chinese-simplified": "用于从 Kemono 和 Coomer 站点下载内容的独立浏览器扩展程序。此扩展程序提供桌面应用程序的替代方案，允许您直接从浏览器下载帖子。<br><br>"
+                           "<b>核心功能:</b><br>"
+                           "- 从 Kemono/Coomer 页面下载单个帖子或多个文件<br>"
+                           "- 通过复选框选择进行选择性文件下载<br>"
+                           "- 带进度跟踪的多个文件 ZIP 压缩<br>"
+                           "- 大型视频文件的单独下载<br>"
+                           "- 自动文件组织和命名<br>"
+                           "- 兼容 kemono.cr 和 coomer.st<br><br>"
+                           "扩展程序独立于桌面应用程序运行，并使用浏览器的下载管理器。"
+            },
+            "extension_download_title": {
+                "english": "How It Works",
+                "japanese": "動作の仕組み",
+                "korean": "작동 방식",
+                "chinese-simplified": "工作原理"
+            },
+            "extension_download_text": {
+                "english": "The extension automatically detects when you're on a Kemono or Coomer post page and provides a download interface. You can select which files to download and choose between ZIP compression or individual file downloads.<br><br>"
+                           "<b>Download Options:</b><br>"
+                           "- <b>Selective Downloads:</b> Choose specific files using checkboxes<br>"
+                           "- <b>ZIP Compression:</b> Download multiple files as a single compressed archive<br>"
+                           "- <b>Individual Files:</b> Download large files separately for better performance<br>"
+                           "- <b>Progress Tracking:</b> Monitor download progress in real-time<br><br>"
+                           "Files are downloaded directly to your browser's default download folder.",
+                "japanese": "拡張機能は自動的にKemonoまたはCoomerの投稿ページにいることを検知し、ダウンロードインターフェースを提供します。ダウンロードするファイルを選択し、ZIP圧縮または個別ファイルダウンロードを選択できます。<br><br>"
+                           "<b>ダウンロードオプション:</b><br>"
+                           "- <b>選択ダウンロード:</b> チェックボックスを使用して特定のファイルを選択<br>"
+                           "- <b>ZIP圧縮:</b> 複数のファイルを単一の圧縮アーカイブとしてダウンロード<br>"
+                           "- <b>個別ファイル:</b> 大容量ファイルを個別にダウンロードしてパフォーマンスを向上<br>"
+                           "- <b>進捗追跡:</b> リアルタイムでダウンロード進捗を監視<br><br>"
+                           "ファイルはブラウザのデフォルトダウンロードフォルダに直接ダウンロードされます。",
+                "korean": "확장 프로그램은 자동으로 Kemono 또는 Coomer 게시물 페이지에 있는 것을 감지하고 다운로드 인터페이스를 제공합니다. 다운로드할 파일을 선택하고 ZIP 압축 또는 개별 파일 다운로드 중에서 선택할 수 있습니다.<br><br>"
+                          "<b>다운로드 옵션:</b><br>"
+                          "- <b>선택적 다운로드:</b> 체크박스를 사용하여 특정 파일 선택<br>"
+                          "- <b>ZIP 압축:</b> 여러 파일을 단일 압축 아카이브로 다운로드<br>"
+                          "- <b>개별 파일:</b> 대용량 파일을 개별적으로 다운로드하여 성능 향상<br>"
+                          "- <b>진행률 추적:</b> 실시간으로 다운로드 진행률 모니터링<br><br>"
+                          "파일은 브라우저의 기본 다운로드 폴더에 직접 다운로드됩니다.",
+                "chinese-simplified": "扩展程序会自动检测您何时在 Kemono 或 Coomer 帖子页面上，并提供下载界面。您可以选择要下载的文件，并选择 ZIP 压缩或单独文件下载。<br><br>"
+                           "<b>下载选项:</b><br>"
+                           "- <b>选择性下载:</b> 使用复选框选择特定文件<br>"
+                           "- <b>ZIP 压缩:</b> 将多个文件作为单个压缩存档下载<br>"
+                           "- <b>单独文件:</b> 单独下载大文件以提高性能<br>"
+                           "- <b>进度跟踪:</b> 实时监控下载进度<br><br>"
+                           "文件直接下载到浏览器的默认下载文件夹。"
+            },
+            "extension_install_title": {
+                "english": "Installation",
+                "japanese": "インストール",
+                "korean": "설치",
+                "chinese-simplified": "安装"
+            },
+            "extension_install_text": {
+                "english": "Ready to enhance your Kemono browsing experience? Install the extension now:<br><br>"
+                           "<b>1.</b> Download the extension package from our <a href='https://github.com/VoxDroid/KemonoDownloader/releases'>GitHub Releases</a><br>"
+                           "<b>2.</b> Extract the ZIP file to a folder on your computer<br>"
+                           "<b>3.</b> Follow the browser-specific installation instructions below<br><br>"
+                           "The extension works with Chrome, Edge, and other Chromium-based browsers.",
+                "japanese": "Kemonoブラウジング体験を向上させる準備はできましたか？今すぐ拡張機能をインストールしてください：<br><br>"
+                           "<b>1.</b> <a href='https://github.com/VoxDroid/KemonoDownloader/releases'>GitHub Releases</a>から拡張機能パッケージをダウンロード<br>"
+                           "<b>2.</b> ZIPファイルをコンピュータ上のフォルダに解凍<br>"
+                           "<b>3.</b> 以下のブラウザ固有のインストール手順に従ってください<br><br>"
+                           "拡張機能はChrome、Edge、およびその他のChromiumベースのブラウザで動作します。",
+                "korean": "Kemono 브라우징 경험을 향상시킬 준비가 되셨나요? 지금 확장을 설치하세요:<br><br>"
+                          "<b>1.</b> <a href='https://github.com/VoxDroid/KemonoDownloader/releases'>GitHub Releases</a>에서 확장 패키지 다운로드<br>"
+                          "<b>2.</b> ZIP 파일을 컴퓨터의 폴더에 압축 해제<br>"
+                          "<b>3.</b> 아래 브라우저별 설치 지침을 따르세요<br><br>"
+                          "확장은 Chrome, Edge 및 기타 Chromium 기반 브라우저와 작동합니다.",
+                "chinese-simplified": "准备好增强您的 Kemono 浏览体验了吗？立即安装扩展程序：<br><br>"
+                           "<b>1.</b> 从我们的 <a href='https://github.com/VoxDroid/KemonoDownloader/releases'>GitHub Releases</a> 下载扩展包<br>"
+                           "<b>2.</b> 将 ZIP 文件解压到计算机上的文件夹中<br>"
+                           "<b>3.</b> 按照下面的浏览器特定安装说明操作<br><br>"
+                           "扩展程序适用于 Chrome、Edge 和其他基于 Chromium 的浏览器。"
+            },
+            "extension_install_chrome": {
+                "english": "<b>For Chrome/Edge:</b><br>"
+                           "<b>1.</b> Open Chrome or Edge and type <code>chrome://extensions/</code> in the address bar<br>"
+                           "<b>2.</b> Enable 'Developer mode' in the top right corner<br>"
+                           "<b>3.</b> Click 'Load unpacked' and select the extracted extension folder<br>"
+                           "<b>4.</b> The extension should now appear in your extensions list<br><br>",
+                "japanese": "<b>Chrome/Edgeの場合:</b><br>"
+                           "<b>1.</b> ChromeまたはEdgeを開き、アドレスバーに<code>chrome://extensions/</code>と入力<br>"
+                           "<b>2.</b> 右上隅の「デベロッパーモード」を有効化<br>"
+                           "<b>3.</b> 「パッケージ化されていない拡張機能を読み込む」をクリックし、解凍した拡張機能フォルダを選択<br>"
+                           "<b>4.</b> 拡張機能が拡張機能リストに表示されるはずです<br><br>",
+                "korean": "<b>Chrome/Edge의 경우:</b><br>"
+                          "<b>1.</b> Chrome 또는 Edge를 열고 주소 표시줄에 <code>chrome://extensions/</code> 입력<br>"
+                          "<b>2.</b> 오른쪽 상단에서 '개발자 모드' 활성화<br>"
+                          "<b>3.</b> '압축 해제된 확장 프로그램 로드'를 클릭하고 압축 해제된 확장 폴더 선택<br>"
+                          "<b>4.</b> 확장이 확장 목록에 나타나야 합니다<br><br>",
+                "chinese-simplified": "<b>Chrome/Edge：</b><br>"
+                           "<b>1.</b> 打开 Chrome 或 Edge，在地址栏中输入 <code>chrome://extensions/</code><br>"
+                           "<b>2.</b> 在右上角启用'开发者模式'<br>"
+                           "<b>3.</b> 点击'加载已解压的扩展程序'并选择解压的扩展文件夹<br>"
+                           "<b>4.</b> 扩展程序现在应该出现在您的扩展列表中<br><br>"
+            },
+            "extension_install_firefox": {
+                "english": "<b>For Firefox:</b><br>"
+                           "<b>1.</b> Open Firefox and type <code>about:debugging</code> in the address bar<br>"
+                           "<b>2.</b> Click 'This Firefox' in the left sidebar<br>"
+                           "<b>3.</b> Click 'Load Temporary Add-on' and select the manifest.json file from the extracted folder<br>"
+                           "<b>4.</b> The extension will be temporarily installed (you'll need to reinstall after browser restart)<br><br>",
+                "japanese": "<b>Firefoxの場合:</b><br>"
+                           "<b>1.</b> Firefoxを開き、アドレスバーに<code>about:debugging</code>と入力<br>"
+                           "<b>2.</b> 左サイドバーの「This Firefox」をクリック<br>"
+                           "<b>3.</b> 「Load Temporary Add-on」をクリックし、解凍したフォルダからmanifest.jsonファイルを選択<br>"
+                           "<b>4.</b> 拡張機能が一時的にインストールされます（ブラウザ再起動後に再インストールが必要です）<br><br>",
+                "korean": "<b>Firefox의 경우:</b><br>"
+                          "<b>1.</b> Firefox를 열고 주소 표시줄에 <code>about:debugging</code> 입력<br>"
+                          "<b>2.</b> 왼쪽 사이드바에서 'This Firefox' 클릭<br>"
+                          "<b>3.</b> 'Load Temporary Add-on'을 클릭하고 압축 해제된 폴더에서 manifest.json 파일 선택<br>"
+                          "<b>4.</b> 확장이 임시로 설치됩니다(브라우저 재시작 후 재설치 필요)<br><br>",
+                "chinese-simplified": "<b>Firefox：</b><br>"
+                           "<b>1.</b> 打开 Firefox，在地址栏中输入 <code>about:debugging</code><br>"
+                           "<b>2.</b> 在左侧边栏中点击'此 Firefox'<br>"
+                           "<b>3.</b> 点击'加载临时附加组件'并从解压文件夹中选择 manifest.json 文件<br>"
+                           "<b>4.</b> 扩展程序将被临时安装（浏览器重启后需要重新安装）<br><br>"
+            },
+            "extension_setup_title": {
+                "english": "Configure the Extension",
+                "japanese": "拡張機能を設定",
+                "korean": "확장 구성",
+                "chinese-simplified": "配置扩展"
+            },
+            "extension_setup_text": {
+                "english": "The extension works out of the box with sensible defaults, but you can customize its behavior:<br><br>"
+                           "<b>Download Location:</b> Files are downloaded to your browser's default download folder. The extension integrates with your system's download manager for the best experience.<br><br>"
+                           "<b>File Organization:</b> The extension automatically organizes downloads with post titles and maintains file structure. No additional configuration needed.<br><br>"
+                           "<b>Performance:</b> Large video files are downloaded individually for optimal performance, while smaller files are compressed into ZIP archives.<br><br>"
+                           "<b>Compatibility:</b> The extension automatically detects whether you're on kemono.cr or coomer.st and adjusts accordingly.",
+                "japanese": "拡張機能はすぐに使用できる適切なデフォルト設定で動作しますが、動作をカスタマイズできます：<br><br>"
+                           "<b>ダウンロード場所:</b> ファイルはブラウザのデフォルトダウンロードフォルダにダウンロードされます。拡張機能は最適なエクスペリエンスのためにシステムのダウンロードマネージャーと統合します。<br><br>"
+                           "<b>ファイル整理:</b> 拡張機能は投稿タイトルでダウンロードを自動的に整理し、ファイル構造を維持します。追加の設定は必要ありません。<br><br>"
+                           "<b>パフォーマンス:</b> 大容量動画ファイルは最適なパフォーマンスのために個別にダウンロードされ、小さいファイルはZIPアーカイブに圧縮されます。<br><br>"
+                           "<b>互換性:</b> 拡張機能は自動的にkemono.crまたはcoomer.stにいるかを検知し、それに応じて調整します。",
+                "korean": "확장은 합리적인 기본값으로 즉시 작동하지만 동작을 사용자 정의할 수 있습니다:<br><br>"
+                          "<b>다운로드 위치:</b> 파일은 브라우저의 기본 다운로드 폴더에 다운로드됩니다. 확장은 최상의 경험을 위해 시스템 다운로드 관리자와 통합합니다.<br><br>"
+                          "<b>파일 구성:</b> 확장은 게시물 제목으로 다운로드를 자동으로 구성하고 파일 구조를 유지합니다. 추가 구성이 필요하지 않습니다.<br><br>"
+                          "<b>성능:</b> 대용량 비디오 파일은 최적의 성능을 위해 개별적으로 다운로드되며, 작은 파일은 ZIP 아카이브로 압축됩니다.<br><br>"
+                          "<b>호환성:</b> 확장은 자동으로 kemono.cr 또는 coomer.st에 있는지 감지하고 그에 따라 조정합니다.",
+                "chinese-simplified": "扩展程序开箱即用，具有合理的默认设置，但您可以自定义其行为：<br><br>"
+                           "<b>下载位置：</b>文件下载到浏览器的默认下载文件夹。扩展程序与您的系统下载管理器集成以获得最佳体验。<br><br>"
+                           "<b>文件组织：</b>扩展程序自动使用帖子标题组织下载并维护文件结构。不需要额外配置。<br><br>"
+                           "<b>性能：</b>大型视频文件为获得最佳性能而单独下载，而较小的文件则压缩到 ZIP 存档中。<br><br>"
+                           "<b>兼容性：</b>扩展程序自动检测您是在 kemono.cr 还是 coomer.st 上，并相应调整。"
+            },
+            "extension_troubleshooting_title": {
+                "english": "Troubleshooting",
+                "japanese": "トラブルシューティング",
+                "korean": "문제 해결",
+                "chinese-simplified": "故障排除"
+            },
+            "extension_troubleshooting_text": {
+                "english": "If you encounter issues with the extension:<br><br>"
+                           "<b>Extension not showing buttons:</b> Make sure you're on a valid Kemono or Coomer page<br>"
+                           "<b>Downloads not working:</b> Check that the download folder path is correct in extension settings<br>"
+                           "<b>Extension disappeared:</b> For Firefox, you'll need to reinstall after browser restart<br>"
+                           "<b>Permission issues:</b> Ensure the extension has the necessary permissions enabled<br><br>"
+                           "For additional help, check the GitHub repository or create an issue.",
+                "japanese": "拡張機能で問題が発生した場合：<br><br>"
+                           "<b>拡張機能がボタンを表示しない:</b> 有効なKemonoまたはCoomerページにいることを確認してください<br>"
+                           "<b>ダウンロードが機能しない:</b> 拡張機能設定でダウンロードフォルダパスが正しいことを確認してください<br>"
+                           "<b>拡張機能が消えた:</b> Firefoxの場合、ブラウザ再起動後に再インストールが必要です<br>"
+                           "<b>権限の問題:</b> 拡張機能に必要な権限が有効になっていることを確認してください<br><br>"
+                           "追加のヘルプについては、GitHubリポジトリを確認するか、イシューを作成してください。",
+                "korean": "확장에서 문제가 발생하는 경우:<br><br>"
+                          "<b>확장이 버튼을 표시하지 않음:</b> 유효한 Kemono 또는 Coomer 페이지에 있는지 확인하세요<br>"
+                          "<b>다운로드가 작동하지 않음:</b> 확장 설정에서 다운로드 폴더 경로가 올바른지 확인하세요<br>"
+                          "<b>확장이 사라짐:</b> Firefox의 경우 브라우저 재시작 후 재설치 필요<br>"
+                          "<b>권한 문제:</b> 확장에 필요한 권한이 활성화되어 있는지 확인하세요<br><br>"
+                          "추가 도움말은 GitHub 저장소를 확인하거나 이슈를 생성하세요.",
+                "chinese-simplified": "如果您遇到扩展程序问题：<br><br>"
+                           "<b>扩展程序不显示按钮：</b>确保您在有效的 Kemono 或 Coomer 页面上<br>"
+                           "<b>下载不工作：</b>检查扩展设置中的下载文件夹路径是否正确<br>"
+                           "<b>扩展程序消失：</b>对于 Firefox，您需要在浏览器重启后重新安装<br>"
+                           "<b>权限问题：</b>确保扩展程序已启用必要的权限<br><br>"
+                           "如需额外帮助，请查看 GitHub 仓库或创建问题。"
             },
             "tor_status_stopped": {
                 "english": "Tor Status: Stopped",

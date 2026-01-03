@@ -14,6 +14,7 @@ from kemonodownloader.post_downloader import PostDownloaderTab
 from kemonodownloader.creator_downloader import CreatorDownloaderTab
 from kemonodownloader.kd_settings import SettingsTab
 from kemonodownloader.kd_help import HelpTab
+from kemonodownloader.kd_extension import ExtensionTab
 from kemonodownloader.kd_language import translate, language_manager
 from bs4 import MarkupResemblesLocatorWarning
 import warnings
@@ -264,6 +265,9 @@ class KemonoDownloader(QMainWindow):
         self.help_tab = HelpTab(self)
         self.tabs.addTab(self.help_tab, qta.icon('fa5s.question-circle', color='white'), translate("help_tab"))
 
+        self.extension_tab = ExtensionTab(self)
+        self.tabs.addTab(self.extension_tab, qta.icon('fa5s.puzzle-piece', color='white'), translate("extension_tab"))
+
         # Footer
         footer = QWidget()
         footer_layout = QHBoxLayout(footer)
@@ -290,6 +294,7 @@ class KemonoDownloader(QMainWindow):
             self.tabs.setTabText(1, translate("creator_downloader_tab"))
             self.tabs.setTabText(2, translate("settings_tab"))
             self.tabs.setTabText(3, translate("help_tab"))
+            self.tabs.setTabText(4, translate("extension_tab"))
             
             if self.status_label.text() == "Idle" or self.status_label.text() == "アイドル" or self.status_label.text() == "대기 중":
                 self.status_label.setText(translate("idle"))
@@ -300,6 +305,7 @@ class KemonoDownloader(QMainWindow):
             self.creator_tab.refresh_ui() 
             self.settings_tab.update_ui_text()
             self.help_tab.update_ui_text()
+            self.extension_tab.update_ui_text()
 
     def transition_to_main(self):
         self.main_widget = self.setup_main_ui()
