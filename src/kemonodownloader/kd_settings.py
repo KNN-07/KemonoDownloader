@@ -1096,14 +1096,14 @@ GeoIPExcludeUnknown 1
         tor_path = self.temp_settings["tor_path"]
         tor_exists = bool(tor_path and os.path.exists(tor_path))
         
-        self.test_tor_button.setEnabled(tor_exists)
+        self.test_tor_button.setEnabled(bool(tor_exists))
         self.download_tor_button.setVisible(not tor_exists)  # Hide download button if Tor is already available
         
         if self.tor_process and self.tor_process.state() == QProcess.ProcessState.Running:
             self.start_tor_button.setEnabled(False)
             self.stop_tor_button.setEnabled(True)
         else:
-            self.start_tor_button.setEnabled(tor_exists)
+            self.start_tor_button.setEnabled(bool(tor_exists))
             self.stop_tor_button.setEnabled(False)
 
     def handle_tor_output(self):
