@@ -31,12 +31,33 @@ requires = [
     "pillow",
     "fake-useragent",
     "aiohttp",
-    "asyncio"
+    "asyncio",
+    "PySocks",
 ]
 
 test_requires = [
     "pytest",
 ]
+
+[tool.mypy]
+files = ["src"]
+strict = false
+ignore_missing_imports = true
+disallow_untyped_calls = false
+disallow_untyped_defs = false
+
+[[tool.mypy.overrides]]
+module = "requests"
+ignore_missing_imports = true
+
+[tool.isort]
+profile = "black"
+line_length = 88
+src_paths = ["src"]
+known_first_party = "kemonodownloader"
+include_trailing_comma = true
+combine_as_imports = true
+force_grid_wrap = 0
 
 [tool.briefcase.app.kemonodownloader.macOS]
 universal_build = false

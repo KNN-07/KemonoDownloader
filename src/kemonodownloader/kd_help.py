@@ -1,7 +1,9 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QLabel
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
-from kemonodownloader.kd_language import translate 
+from PyQt6.QtWidgets import QLabel, QScrollArea, QVBoxLayout, QWidget
+
+from kemonodownloader.kd_language import translate
+
 
 class HelpTab(QWidget):
     def __init__(self, parent):
@@ -17,7 +19,8 @@ class HelpTab(QWidget):
 
         scroll_area = QScrollArea()
         scroll_area.setWidgetResizable(True)
-        scroll_area.setStyleSheet("""
+        scroll_area.setStyleSheet(
+            """
             QScrollArea {
                 border: none;
                 background: #2A3B5A;
@@ -38,14 +41,15 @@ class HelpTab(QWidget):
             QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
                 height: 0px;
             }
-        """)
+        """
+        )
 
         content_widget = QWidget()
         self.content_layout = QVBoxLayout(content_widget)
         self.content_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
         self.content_layout.setSpacing(20)
 
-        self.update_ui_text() 
+        self.update_ui_text()
 
         scroll_area.setWidget(content_widget)
         main_layout.addWidget(scroll_area)
@@ -74,7 +78,9 @@ class HelpTab(QWidget):
         self.content_layout.addWidget(intro_label)
 
         # Section: Getting Started
-        getting_started_title = QLabel(f"<h2>{translate('help_getting_started_title')}</h2>")
+        getting_started_title = QLabel(
+            f"<h2>{translate('help_getting_started_title')}</h2>"
+        )
         getting_started_title.setFont(QFont("Poppins", 16, QFont.Weight.Bold))
         getting_started_title.setStyleSheet("color: white; padding: 10px 5px 5px 5px;")
         self.content_layout.addWidget(getting_started_title)
@@ -87,7 +93,9 @@ class HelpTab(QWidget):
         self.content_layout.addWidget(getting_started_text)
 
         # Section: Using the Post Downloader Tab
-        post_downloader_title = QLabel(f"<h2>{translate('help_post_downloader_title')}</h2>")
+        post_downloader_title = QLabel(
+            f"<h2>{translate('help_post_downloader_title')}</h2>"
+        )
         post_downloader_title.setFont(QFont("Poppins", 16, QFont.Weight.Bold))
         post_downloader_title.setStyleSheet("color: white; padding: 10px 5px 5px 5px;")
         self.content_layout.addWidget(post_downloader_title)
@@ -100,9 +108,13 @@ class HelpTab(QWidget):
         self.content_layout.addWidget(post_downloader_text)
 
         # Section: Using the Creator Downloader Tab
-        creator_downloader_title = QLabel(f"<h2>{translate('help_creator_downloader_title')}</h2>")
+        creator_downloader_title = QLabel(
+            f"<h2>{translate('help_creator_downloader_title')}</h2>"
+        )
         creator_downloader_title.setFont(QFont("Poppins", 16, QFont.Weight.Bold))
-        creator_downloader_title.setStyleSheet("color: white; padding: 10px 5px 5px 5px;")
+        creator_downloader_title.setStyleSheet(
+            "color: white; padding: 10px 5px 5px 5px;"
+        )
         self.content_layout.addWidget(creator_downloader_title)
 
         creator_downloader_text = QLabel(translate("help_creator_downloader_text"))
@@ -139,7 +151,9 @@ class HelpTab(QWidget):
         self.content_layout.addWidget(help_tab_text)
 
         # Section: Troubleshooting
-        troubleshooting_title = QLabel(f"<h2>{translate('help_troubleshooting_title')}</h2>")
+        troubleshooting_title = QLabel(
+            f"<h2>{translate('help_troubleshooting_title')}</h2>"
+        )
         troubleshooting_title.setFont(QFont("Poppins", 16, QFont.Weight.Bold))
         troubleshooting_title.setStyleSheet("color: white; padding: 10px 5px 5px 5px;")
         self.content_layout.addWidget(troubleshooting_title)

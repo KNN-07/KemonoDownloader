@@ -2,6 +2,7 @@ pyqt6
 bs4
 qtawesome
 requests
+types-requests
 packaging
 pillow
 briefcase
@@ -9,3 +10,6 @@ fake-useragent
 aiohttp
 asyncio
 PySocks
+pre-commit
+mypy 
+pyright

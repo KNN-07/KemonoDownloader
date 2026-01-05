@@ -1,8 +1,16 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QLabel, QPushButton, QHBoxLayout
-from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QFont, QDesktopServices
-from PyQt6.QtCore import QUrl
+from PyQt6.QtCore import Qt, QUrl
+from PyQt6.QtGui import QDesktopServices, QFont
+from PyQt6.QtWidgets import (
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QScrollArea,
+    QVBoxLayout,
+    QWidget,
+)
+
 from kemonodownloader.kd_language import translate
+
 
 class ExtensionTab(QWidget):
     def __init__(self, parent):
@@ -18,7 +26,8 @@ class ExtensionTab(QWidget):
 
         scroll_area = QScrollArea()
         scroll_area.setWidgetResizable(True)
-        scroll_area.setStyleSheet("""
+        scroll_area.setStyleSheet(
+            """
             QScrollArea {
                 border: none;
                 background: #2A3B5A;
@@ -39,7 +48,8 @@ class ExtensionTab(QWidget):
             QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
                 height: 0px;
             }
-        """)
+        """
+        )
 
         content_widget = QWidget()
         self.content_layout = QVBoxLayout(content_widget)
@@ -102,7 +112,8 @@ class ExtensionTab(QWidget):
 
         download_button = QPushButton("📦 " + translate("download"))
         download_button.setFont(QFont("Poppins", 12, QFont.Weight.Bold))
-        download_button.setStyleSheet("""
+        download_button.setStyleSheet(
+            """
             QPushButton {
                 background: #4A5B7A;
                 color: white;
@@ -117,8 +128,13 @@ class ExtensionTab(QWidget):
             QPushButton:pressed {
                 background: #3A4B6A;
             }
-        """)
-        download_button.clicked.connect(lambda: QDesktopServices.openUrl(QUrl("https://github.com/VoxDroid/KemonoDownloader/releases")))
+        """
+        )
+        download_button.clicked.connect(
+            lambda: QDesktopServices.openUrl(
+                QUrl("https://github.com/VoxDroid/KemonoDownloader/releases")
+            )
+        )
         download_button_layout.addWidget(download_button)
         download_button_layout.addStretch()
         self.content_layout.addLayout(download_button_layout)
@@ -167,7 +183,9 @@ class ExtensionTab(QWidget):
         self.content_layout.addWidget(setup_text)
 
         # Troubleshooting Section
-        troubleshooting_title = QLabel(f"<h2>{translate('extension_troubleshooting_title')}</h2>")
+        troubleshooting_title = QLabel(
+            f"<h2>{translate('extension_troubleshooting_title')}</h2>"
+        )
         troubleshooting_title.setFont(QFont("Poppins", 16, QFont.Weight.Bold))
         troubleshooting_title.setStyleSheet("color: white; padding: 10px 5px 5px 5px;")
         self.content_layout.addWidget(troubleshooting_title)
