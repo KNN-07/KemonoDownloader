@@ -8,7 +8,6 @@ import hashlib
 import os
 import sys
 
-
 try:
     from kemonodownloader.creator_downloader import (
         HEADERS,

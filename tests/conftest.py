@@ -1,6 +1,6 @@
+import os
 import sys
 from pathlib import Path
-import os
 
 # Add the src directory to the python path
 src_path = Path(__file__).parent.parent / "src"

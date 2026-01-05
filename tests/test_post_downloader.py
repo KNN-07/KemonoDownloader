@@ -7,7 +7,6 @@ import os
 import sys
 from urllib.parse import urljoin
 
-
 try:
     from kemonodownloader.post_downloader import (
         HEADERS,
