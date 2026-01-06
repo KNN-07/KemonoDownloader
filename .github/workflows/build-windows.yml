@@ -1,5 +1,7 @@
 name: Build Windows Binary
 
+# This workflow builds Windows binaries (portable and installer) using Briefcase
+# Triggered on pushes to main/master, version tags, PRs, or manual workflow dispatch
 on:
   push:
     branches: ["main", "master"]
@@ -31,20 +33,26 @@ jobs:
         run: |
           briefcase build windows
       
-      - name: Package Windows application
+      - name: Package Windows MSI Installer
         run: |
-          briefcase package windows
+          briefcase package windows --packaging-format msi --adhoc-sign
+      
+      - name: Package Windows Portable ZIP
+        run: |
+          briefcase package windows --packaging-format zip
       
       - name: Upload Windows Portable Executable
         uses: actions/upload-artifact@v4
         with:
           name: KemonoDownloader-Windows-Portable
-          path: windows/*.exe
+          path: |
+            dist/*.exe
+            dist/*.zip
           if-no-files-found: warn
       
       - name: Upload Windows MSI Installer
         uses: actions/upload-artifact@v4
         with:
           name: KemonoDownloader-Windows-MSI
-          path: windows/*.msi
+          path: dist/*.msi
           if-no-files-found: warn
