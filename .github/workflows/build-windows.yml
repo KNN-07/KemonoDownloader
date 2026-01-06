@@ -1,0 +1,62 @@
+name: Build Windows Binary
+
+# This workflow builds Windows binaries (portable and installer) using Briefcase
+# Triggered on pushes to main/master, version tags, PRs, or manual workflow dispatch
+on:
+  push:
+    branches: ["main", "master"]
+    tags:
+      - 'v*'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    name: Build Windows Binary
+    runs-on: windows-latest
+    permissions:
+      contents: read
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      - name: Build Windows application
+        run: |
+          briefcase build windows
+      
+      - name: Package Windows MSI Installer
+        run: |
+          briefcase package windows --packaging-format msi --adhoc-sign
+        # Note: Using --adhoc-sign for open-source builds
+        # For production releases with a code signing certificate, set the signing identity
+      
+      - name: Package Windows Portable ZIP
+        run: |
+          briefcase package windows --packaging-format zip
+      
+      - name: Upload Windows Portable Executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: KemonoDownloader-Windows-Portable
+          path: |
+            dist/*.exe
+            dist/*.zip
+          if-no-files-found: warn
+      
+      - name: Upload Windows MSI Installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: KemonoDownloader-Windows-MSI
+          path: dist/*.msi
+          if-no-files-found: warn
