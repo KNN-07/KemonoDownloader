@@ -1959,6 +1959,14 @@ class PostDownloaderTab(QWidget):
         self.post_filter_group = QGroupBox()
         self.post_filter_group.setStyleSheet("QGroupBox { color: white; }")
         filter_layout = QGridLayout()
+        
+        # Add "All Files" checkbox at the top
+        self.post_all_files_check = QCheckBox("All Files")
+        self.post_all_files_check.setChecked(False)
+        self.post_all_files_check.setStyleSheet("font-weight: bold;")
+        self.post_all_files_check.stateChanged.connect(self.toggle_all_extensions)
+        filter_layout.addWidget(self.post_all_files_check, 0, 0, 1, 4)
+        
         self.post_filter_checks = {
             ".jpg": QCheckBox("JPG"),
             ".jpeg": QCheckBox("JPEG"),
@@ -1982,7 +1990,7 @@ class PostDownloaderTab(QWidget):
         for i, (ext, check) in enumerate(self.post_filter_checks.items()):
             check.setChecked(True)
             check.stateChanged.connect(self.filter_items)
-            filter_layout.addWidget(check, i // 4, i % 4)
+            filter_layout.addWidget(check, (i // 4) + 1, i % 4)
         self.post_filter_group.setLayout(filter_layout)
         file_list_layout.addWidget(self.post_filter_group)
 
@@ -2384,11 +2392,15 @@ class PostDownloaderTab(QWidget):
                 if isinstance(post_data, dict) and "post" not in post_data
                 else post_data.get("post", {})
             )
-            allowed_extensions = [
-                ext.lower()
-                for ext, check in self.post_filter_checks.items()
-                if check.isChecked()
-            ]
+            # If "All Files" is checked, use empty list to indicate downloading all extensions
+            if self.post_all_files_check.isChecked():
+                allowed_extensions = []
+            else:
+                allowed_extensions = [
+                    ext.lower()
+                    for ext, check in self.post_filter_checks.items()
+                    if check.isChecked()
+                ]
             self.all_detected_files = self.detect_files(post, allowed_extensions)
             self.file_url_map = {
                 file_name: file_url for file_name, file_url in self.all_detected_files
@@ -2453,6 +2465,9 @@ class PostDownloaderTab(QWidget):
     def detect_files(self, post, allowed_extensions):
         detected_files = []
         domain_config = get_domain_config(self.current_post_url)
+        
+        # When allowed_extensions is empty, it means "All Files" is selected
+        download_all = not allowed_extensions
 
         def get_effective_extension(file_path, file_name):
             name_ext = os.path.splitext(file_name)[1].lower()
@@ -2466,7 +2481,9 @@ class PostDownloaderTab(QWidget):
             file_url = urljoin(domain_config["base_url"], file_path)
             if "f=" not in file_url and file_name:
                 file_url += f"?f={file_name}"
-            if ".jpg" in allowed_extensions and file_ext in [".jpg", ".jpeg"]:
+            if download_all:
+                detected_files.append((file_name, file_url))
+            elif ".jpg" in allowed_extensions and file_ext in [".jpg", ".jpeg"]:
                 detected_files.append((file_name, file_url))
             elif file_ext in allowed_extensions:
                 detected_files.append((file_name, file_url))
@@ -2482,7 +2499,9 @@ class PostDownloaderTab(QWidget):
                     attachment_url = urljoin(domain_config["base_url"], attachment_path)
                     if "f=" not in attachment_url and attachment_name:
                         attachment_url += f"?f={attachment_name}"
-                    if ".jpg" in allowed_extensions and attachment_ext in [
+                    if download_all:
+                        detected_files.append((attachment_name, attachment_url))
+                    elif ".jpg" in allowed_extensions and attachment_ext in [
                         ".jpg",
                         ".jpeg",
                     ]:
@@ -2496,7 +2515,9 @@ class PostDownloaderTab(QWidget):
                 img_url = urljoin(domain_config["base_url"], img["src"])
                 img_ext = os.path.splitext(img_url)[1].lower()
                 img_name = os.path.basename(img_url)
-                if ".jpg" in allowed_extensions and img_ext in [".jpg", ".jpeg"]:
+                if download_all:
+                    detected_files.append((img_name, img_url))
+                elif ".jpg" in allowed_extensions and img_ext in [".jpg", ".jpeg"]:
                     detected_files.append((img_name, img_url))
                 elif img_ext in allowed_extensions:
                     detected_files.append((img_name, img_url))
@@ -3136,13 +3157,29 @@ class PostDownloaderTab(QWidget):
             "INFO",
         )
 
+    def toggle_all_extensions(self):
+        """Toggle all extension checkboxes when 'All Files' is checked/unchecked."""
+        all_files_checked = self.post_all_files_check.isChecked()
+        
+        # When "All Files" is checked, disable individual extension checkboxes
+        for check in self.post_filter_checks.values():
+            check.setEnabled(not all_files_checked)
+        
+        # Trigger filter update
+        self.filter_items()
+
     def filter_items(self):
         search_text = self.post_search_input.text().lower()
-        active_filters = [
-            ext.lower()
-            for ext, check in self.post_filter_checks.items()
-            if check.isChecked()
-        ]
+        
+        # If "All Files" is checked, don't filter by extension
+        if self.post_all_files_check.isChecked():
+            active_filters = []
+        else:
+            active_filters = [
+                ext.lower()
+                for ext, check in self.post_filter_checks.items()
+                if check.isChecked()
+            ]
 
         # Preserve current checked states of visible items
         current_states = {
@@ -3158,6 +3195,7 @@ class PostDownloaderTab(QWidget):
         # Add items matching search and filter criteria
         for file_name, file_url in self.all_detected_files:
             file_ext = os.path.splitext(file_name)[1].lower()
+            # When "All Files" is checked, show all files (active_filters is empty)
             if (not search_text or search_text in file_name.lower()) and (
                 not active_filters
                 or file_ext in active_filters

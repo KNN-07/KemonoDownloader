@@ -861,6 +861,7 @@ class FilePreparationThread(QThread):
         post_ids,
         all_files_map,
         creator_ext_checks,
+        creator_all_files_check,
         creator_main_check,
         creator_attachments_check,
         creator_content_check,
@@ -871,6 +872,7 @@ class FilePreparationThread(QThread):
         self.post_ids = post_ids
         self.all_files_map = all_files_map
         self.creator_ext_checks = creator_ext_checks
+        self.creator_all_files_check = creator_all_files_check
         self.creator_main_check = creator_main_check
         self.creator_attachments_check = creator_attachments_check
         self.creator_content_check = creator_content_check
@@ -889,6 +891,9 @@ class FilePreparationThread(QThread):
             ),
             "INFO",
         )
+        
+        # When allowed_extensions is empty, it means "All Files" is selected
+        download_all = not allowed_extensions
 
         def get_effective_extension(file_path, file_name):
             name_ext = os.path.splitext(file_name)[1].lower()
@@ -914,7 +919,13 @@ class FilePreparationThread(QThread):
                 ),
                 "INFO",
             )
-            if ".jpg" in allowed_extensions and file_ext in [".jpg", ".jpeg"]:
+            if download_all:
+                self.log.emit(
+                    translate("log_debug", translate("added_main_file", file_name)),
+                    "INFO",
+                )
+                files_to_download.append((file_name, file_url))
+            elif ".jpg" in allowed_extensions and file_ext in [".jpg", ".jpeg"]:
                 self.log.emit(
                     translate("log_debug", translate("added_main_file", file_name)),
                     "INFO",
@@ -948,7 +959,16 @@ class FilePreparationThread(QThread):
                         ),
                         "INFO",
                     )
-                    if ".jpg" in allowed_extensions and attachment_ext in [
+                    if download_all:
+                        self.log.emit(
+                            translate(
+                                "log_debug",
+                                translate("added_attachment", attachment_name),
+                            ),
+                            "INFO",
+                        )
+                        files_to_download.append((attachment_name, attachment_url))
+                    elif ".jpg" in allowed_extensions and attachment_ext in [
                         ".jpg",
                         ".jpeg",
                     ]:
@@ -984,7 +1004,15 @@ class FilePreparationThread(QThread):
                     ),
                     "INFO",
                 )
-                if ".jpg" in allowed_extensions and img_ext in [".jpg", ".jpeg"]:
+                if download_all:
+                    self.log.emit(
+                        translate(
+                            "log_debug", translate("added_content_image", img_name)
+                        ),
+                        "INFO",
+                    )
+                    files_to_download.append((img_name, img_url))
+                elif ".jpg" in allowed_extensions and img_ext in [".jpg", ".jpeg"]:
                     self.log.emit(
                         translate(
                             "log_debug", translate("added_content_image", img_name)
@@ -1079,11 +1107,15 @@ class FilePreparationThread(QThread):
                     ),
                     "INFO",
                 )
-                allowed_extensions = [
-                    ext.lower()
-                    for ext, checkbox in self.creator_ext_checks.items()
-                    if checkbox.isChecked()
-                ]
+                # If "All Files" is checked, use empty list to indicate downloading all extensions
+                if self.creator_all_files_check:
+                    allowed_extensions = []
+                else:
+                    allowed_extensions = [
+                        ext.lower()
+                        for ext, checkbox in self.creator_ext_checks.items()
+                        if checkbox.isChecked()
+                    ]
                 detected_files = self.detect_files(
                     post, allowed_extensions, domain_config
                 )
@@ -2226,6 +2258,14 @@ class CreatorDownloaderTab(QWidget):
         creator_ext_layout = QGridLayout()
         creator_ext_layout.setHorizontalSpacing(20)
         creator_ext_layout.setVerticalSpacing(10)
+        
+        # Add "All Files" checkbox at the top
+        self.creator_all_files_check = QCheckBox("All Files")
+        self.creator_all_files_check.setChecked(False)
+        self.creator_all_files_check.setStyleSheet("font-weight: bold; color: white;")
+        self.creator_all_files_check.stateChanged.connect(self.toggle_all_extensions)
+        creator_ext_layout.addWidget(self.creator_all_files_check, 0, 0, 1, 5)
+        
         self.creator_ext_checks = {
             ".jpg": QCheckBox("JPG/JPEG"),
             ".png": QCheckBox("PNG"),
@@ -2248,7 +2288,7 @@ class CreatorDownloaderTab(QWidget):
         for i, (ext, check) in enumerate(self.creator_ext_checks.items()):
             check.setChecked(True)
             check.stateChanged.connect(self.filter_items)
-            creator_ext_layout.addWidget(check, i // 5, i % 5)
+            creator_ext_layout.addWidget(check, (i // 5) + 1, i % 5)
         self.creator_ext_group.setLayout(creator_ext_layout)
         creator_options_layout.addWidget(self.creator_ext_group)
         self.creator_options_group.setLayout(creator_options_layout)
@@ -3048,6 +3088,7 @@ class CreatorDownloaderTab(QWidget):
             post_ids,
             self.all_files_map,
             self.creator_ext_checks,
+            self.creator_all_files_check.isChecked(),
             self.creator_main_check.isChecked(),
             self.creator_attachments_check.isChecked(),
             self.creator_content_check.isChecked(),
@@ -3724,6 +3765,17 @@ class CreatorDownloaderTab(QWidget):
             ),
             "INFO",
         )
+
+    def toggle_all_extensions(self):
+        """Toggle all extension checkboxes when 'All Files' is checked/unchecked."""
+        all_files_checked = self.creator_all_files_check.isChecked()
+        
+        # When "All Files" is checked, disable individual extension checkboxes
+        for check in self.creator_ext_checks.values():
+            check.setEnabled(not all_files_checked)
+        
+        # Trigger filter update
+        self.filter_items()
 
     def filter_items(self):
         if (
