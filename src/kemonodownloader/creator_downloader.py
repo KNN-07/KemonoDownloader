@@ -891,7 +891,7 @@ class FilePreparationThread(QThread):
             ),
             "INFO",
         )
-        
+
         # When allowed_extensions is empty, it means "All Files" is selected
         download_all = not allowed_extensions
 
@@ -2258,14 +2258,14 @@ class CreatorDownloaderTab(QWidget):
         creator_ext_layout = QGridLayout()
         creator_ext_layout.setHorizontalSpacing(20)
         creator_ext_layout.setVerticalSpacing(10)
-        
+
         # Add "All Files" checkbox at the top
         self.creator_all_files_check = QCheckBox("All Files")
         self.creator_all_files_check.setChecked(False)
         self.creator_all_files_check.setStyleSheet("font-weight: bold; color: white;")
         self.creator_all_files_check.stateChanged.connect(self.toggle_all_extensions)
         creator_ext_layout.addWidget(self.creator_all_files_check, 0, 0, 1, 5)
-        
+
         self.creator_ext_checks = {
             ".jpg": QCheckBox("JPG/JPEG"),
             ".png": QCheckBox("PNG"),
@@ -3769,11 +3769,11 @@ class CreatorDownloaderTab(QWidget):
     def toggle_all_extensions(self):
         """Toggle all extension checkboxes when 'All Files' is checked/unchecked."""
         all_files_checked = self.creator_all_files_check.isChecked()
-        
+
         # When "All Files" is checked, disable individual extension checkboxes
         for check in self.creator_ext_checks.values():
             check.setEnabled(not all_files_checked)
-        
+
         # Trigger filter update
         self.filter_items()
 

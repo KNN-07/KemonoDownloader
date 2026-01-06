@@ -1959,14 +1959,14 @@ class PostDownloaderTab(QWidget):
         self.post_filter_group = QGroupBox()
         self.post_filter_group.setStyleSheet("QGroupBox { color: white; }")
         filter_layout = QGridLayout()
-        
+
         # Add "All Files" checkbox at the top
         self.post_all_files_check = QCheckBox("All Files")
         self.post_all_files_check.setChecked(False)
         self.post_all_files_check.setStyleSheet("font-weight: bold;")
         self.post_all_files_check.stateChanged.connect(self.toggle_all_extensions)
         filter_layout.addWidget(self.post_all_files_check, 0, 0, 1, 4)
-        
+
         self.post_filter_checks = {
             ".jpg": QCheckBox("JPG"),
             ".jpeg": QCheckBox("JPEG"),
@@ -2465,7 +2465,7 @@ class PostDownloaderTab(QWidget):
     def detect_files(self, post, allowed_extensions):
         detected_files = []
         domain_config = get_domain_config(self.current_post_url)
-        
+
         # When allowed_extensions is empty, it means "All Files" is selected
         download_all = not allowed_extensions
 
@@ -3160,17 +3160,17 @@ class PostDownloaderTab(QWidget):
     def toggle_all_extensions(self):
         """Toggle all extension checkboxes when 'All Files' is checked/unchecked."""
         all_files_checked = self.post_all_files_check.isChecked()
-        
+
         # When "All Files" is checked, disable individual extension checkboxes
         for check in self.post_filter_checks.values():
             check.setEnabled(not all_files_checked)
-        
+
         # Trigger filter update
         self.filter_items()
 
     def filter_items(self):
         search_text = self.post_search_input.text().lower()
-        
+
         # If "All Files" is checked, don't filter by extension
         if self.post_all_files_check.isChecked():
             active_filters = []
