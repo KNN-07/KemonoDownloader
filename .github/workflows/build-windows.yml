@@ -14,6 +14,8 @@ jobs:
   build-windows:
     name: Build Windows Binary
     runs-on: windows-latest
+    permissions:
+      contents: read
     
     steps:
       - name: Checkout code
@@ -36,6 +38,8 @@ jobs:
       - name: Package Windows MSI Installer
         run: |
           briefcase package windows --packaging-format msi --adhoc-sign
+        # Note: Using --adhoc-sign for open-source builds
+        # For production releases with a code signing certificate, set the signing identity
       
       - name: Package Windows Portable ZIP
         run: |
