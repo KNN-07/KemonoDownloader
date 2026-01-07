@@ -141,17 +141,168 @@
 
   // Fetch post data on load (only for post pages)
   async function fetchPostData() {
-    if (!isPostPage) return;
+    if (!isPostPage) return false;
+
+    // Ensure we have parsed URL pieces; if not, attempt fallbacks
+    if (!service || !creator_id || !post_id || !domain || !api_base) {
+      console.warn('Missing parsed URL parts, attempting fallback parsing');
+      const parts = window.location.href.split('/').filter(p => p);
+      // Attempt to find 'post' segment and extract surrounding pieces
+      const postIndex = parts.findIndex(p => p === 'post');
+      if (postIndex !== -1 && parts.length > postIndex + 1) {
+        post_id = parts[postIndex + 1];
+        // Try to get creator id and service relative to 'post' position
+        if (postIndex >= 2) {
+          creator_id = parts[postIndex - 1];
+        }
+        if (postIndex >= 4) {
+          service = parts[postIndex - 3];
+        }
+        domain = window.location.href.includes('coomer.st') ? 'coomer.st' : 'kemono.cr';
+        api_base = `https://${domain}/api/v1`;
+        console.log('Fallback parsed:', { service, creator_id, post_id, domain });
+      }
+
+      // DOM-based fallback: try to find canonical URL or meta tags
+      if (!post_id) {
+        const canonical = document.querySelector('link[rel="canonical"]');
+        if (canonical && canonical.href) {
+          const m = canonical.href.match(/\/post\/([^\/\?#]+)/);
+          if (m) post_id = m[1];
+        }
+      }
+
+      if (!creator_id) {
+        // Some pages may include creator id in a data attribute or in the page markup
+        const creatorElem = document.querySelector('[data-creator-id], .creator-id, .user-id');
+        if (creatorElem) {
+          creator_id = creatorElem.getAttribute('data-creator-id') || creatorElem.textContent.trim();
+          console.log('Found creator id from DOM:', creator_id);
+        }
+      }
+
+      if (!service) {
+        // Guess service from URL path segments
+        service = (window.location.href.includes('/fanbox/')) ? 'fanbox' : service;
+      }
+
+      if (!post_id || !creator_id || !service) {
+        console.error('Unable to determine post identifiers:', { service, creator_id, post_id });
+        return false;
+      }
+    }
 
     try {
       const api_url = `${api_base}/${service}/user/${creator_id}/post/${post_id}`;
       console.log('Fetching:', api_url);
-      const response = await fetch(api_url);
-      if (!response.ok) throw new Error('Failed to fetch post data');
 
-      const data = await response.json();
-      console.log('API response:', data);
-      postData = data.post || data;
+      // Initial fetch
+      let response = await fetch(api_url);
+
+      // If we get a 403, retry including credentials (cookies) which may be required for gated/private posts
+      if (!response.ok) {
+        if (response.status === 403) {
+          console.warn('Fetch returned 403 — retrying with credentials included');
+          try {
+            response = await fetch(api_url, { credentials: 'include' });
+            console.log('Retry response status:', response.status);
+          } catch (credErr) {
+            console.error('Retry with credentials failed:', credErr);
+          }
+        }
+      }
+
+      if (!response.ok) {
+        // If 403, attempt a background fetch with special header (site suggests using `Accept: text/css`)
+        if (response.status === 403) {
+          console.warn('Fetch returned 403 — attempting background fetch with Accept: text/css');
+          try {
+            const bgResp = await new Promise(resolve => chrome.runtime.sendMessage({ action: 'fetch_api', url: api_url, accept: 'text/css' }, resolve));
+            console.log('Background fetch result:', bgResp);
+            if (bgResp && bgResp.success && bgResp.status === 200 && bgResp.data) {
+              // Try parse JSON first
+              let parsed;
+              try {
+                parsed = JSON.parse(bgResp.data);
+              } catch (err) {
+                // Try common in-page JSON containers
+                const scriptMatch = bgResp.data.match(/<script[^>]*id=["']__NEXT_DATA__|__INITIAL_STATE__[^>]*>([\s\S]*?)<\/script>/i);
+                if (scriptMatch && scriptMatch[1]) {
+                  try {
+                    parsed = JSON.parse(scriptMatch[1]);
+                  } catch (e) {
+                    // fallthrough
+                  }
+                }
+
+                if (!parsed) {
+                  // Try to find a JSON object that contains "post"
+                  const postMatch = bgResp.data.match(/"post"\s*:\s*(\{[\s\S]*?\})/);
+                  if (postMatch && postMatch[1]) {
+                    try {
+                      parsed = { post: JSON.parse(postMatch[1]) };
+                    } catch (e) {
+                      // last resort: try extracting a larger JSON block
+                      const braceMatch = bgResp.data.match(/(\{[\s\S]*\})/);
+                      if (braceMatch && braceMatch[1]) {
+                        try { parsed = JSON.parse(braceMatch[1]); } catch (e) { parsed = null; }
+                      }
+                    }
+                  }
+                }
+              }
+
+              if (parsed) {
+                console.log('Parsed data from background fetch:', parsed);
+                postData = parsed.post || parsed;
+              } else {
+                throw new Error('Background fetch returned non-JSON content that could not be parsed');
+              }
+            } else {
+              throw new Error(`Background fetch failed: ${bgResp && (bgResp.status || bgResp.error) ? (bgResp.status || bgResp.error) : 'no response'}`);
+            }
+          } catch (bgError) {
+            console.error('Background fetch error:', bgError);
+            let bodyText = '';
+            try { bodyText = await response.text(); } catch (e) {}
+            throw new Error(`Failed to fetch post data: HTTP ${response.status}${bodyText ? ' - ' + bodyText.substring(0,200) : ''} (background fetch also failed)`);
+          }
+        } else {
+          // Try to capture a helpful response body for debugging
+          let bodyText = '';
+          try {
+            bodyText = await response.text();
+          } catch (e) {
+            // ignore
+          }
+          throw new Error(`Failed to fetch post data: HTTP ${response.status}${bodyText ? ' - ' + bodyText.substring(0, 200) : ''}`);
+        }
+      }
+
+      // If postData was set by the background-fetch branch, skip JSON parsing; otherwise parse normally
+      let data;
+      if (!postData) {
+        const contentType = response.headers.get('content-type') || '';
+        if (contentType.includes('application/json')) {
+          data = await response.json();
+        } else {
+          // Some CDNs or sites return JSON payloads with incorrect content-type (e.g., text/css).
+          // Try reading the body as text and parse it as JSON as a best-effort fallback.
+          const text = await response.text();
+          try {
+            data = JSON.parse(text);
+            console.warn('Parsed JSON from non-JSON content-type:', contentType);
+          } catch (err) {
+            console.warn('Unexpected content-type from API and JSON parse failed:', contentType);
+            throw new Error('Unexpected response from API: ' + (text ? text.substring(0, 200) : '(no body)'));
+          }
+        }
+
+        console.log('API response:', data);
+        postData = data.post || data;
+      } else {
+        console.log('Using postData retrieved from background fetch');
+      }
 
       // Build files list
       files = [];
@@ -175,8 +326,10 @@
       }
 
       console.log('Files available:', files);
+      return true;
     } catch (error) {
       console.error('Fetch error:', error);
+      return false;
     }
   }
 
@@ -1007,12 +1160,18 @@
       const iconUrl = 'https://raw.githubusercontent.com/VoxDroid/KemonoDownloader/refs/heads/main/assets/icons/KemonoDownloader-48.png';
       button.innerHTML = '<img src="' + iconUrl + '" alt="Download" style="width: 24px; height: 24px;" onerror="console.error(\'Icon failed to load from CDN:\', \'' + iconUrl + '\')">';
       button.title = 'Download Post (Kemono Downloader)';
-      button.onclick = () => {
+      // Try to fetch post data on click if it wasn't loaded during initialization
+      button.onclick = async () => {
+        if (!postData) {
+          console.log('Post data missing on click — attempting to fetch now...');
+          await fetchPostData();
+        }
+
         if (postData) {
           const modal = createModal();
           document.body.appendChild(modal);
         } else {
-          alert('Post data not loaded yet. Please try again.');
+          alert('Post data not loaded yet. Please try again. Check the Browser Console (Ctrl+Shift+J) for details.');
         }
       };
     } else {
