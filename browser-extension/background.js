@@ -24,6 +24,51 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       }
     });
     return true; // Keep message channel open for async response
+  } else if (request.action === 'fetch_api') {
+    // Background fetch for API endpoints with custom headers/credentials (used for sites blocking JSON requests)
+    (async () => {
+      try {
+        console.log('Background: Fetching API URL with headers:', request.url, request.headers || {});
+        const response = await fetch(request.url, {
+          method: 'GET',
+          credentials: request.credentials || 'include',
+          headers: request.headers || { 'Accept': request.accept || 'text/css' }
+        });
+        const status = response.status;
+        const text = await response.text();
+        sendResponse({ success: response.ok, status, data: text });
+      } catch (error) {
+        console.error('Background: Error fetching API URL:', error);
+        sendResponse({ success: false, error: error.message });
+      }
+    })();
+    return true; // Keep the message channel open
+  } else if (request.action === 'cancel_downloads') {
+    // Cancel active downloads by ID
+    (async () => {
+      try {
+        const ids = request.downloadIds || [];
+        console.log('Background: Cancelling downloads:', ids);
+        for (const id of ids) {
+          try {
+            chrome.downloads.cancel(id, () => {
+              if (chrome.runtime.lastError) {
+                console.warn('Failed to cancel download', id, chrome.runtime.lastError);
+              } else {
+                console.log('Cancelled download', id);
+              }
+            });
+          } catch (e) {
+            console.error('Error cancelling download id', id, e);
+          }
+        }
+        sendResponse({ success: true });
+      } catch (error) {
+        console.error('Background: Error cancelling downloads:', error);
+        sendResponse({ success: false, error: error.message });
+      }
+    })();
+    return true;
   } else if (request.action === 'fetch_file') {
     // Handle CORS fetch in background script
     (async () => {
